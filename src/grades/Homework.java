@@ -1,4 +1,4 @@
 package grades;
 
-public class Homework {
+public class Homework extends Gradable {
 }

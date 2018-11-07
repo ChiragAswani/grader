@@ -1,4 +1,4 @@
 package grades;
 
-public class Quiz {
+public class Quiz extends Gradable{
 }
