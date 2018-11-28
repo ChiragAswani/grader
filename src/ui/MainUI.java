@@ -1,5 +1,6 @@
 package ui;
 
+import core.Course;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +24,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainUI extends Application {
@@ -31,9 +34,11 @@ public class MainUI extends Application {
     private final ObservableList<Person> data =
             FXCollections.observableArrayList();
     final HBox hb = new HBox();
+    private Course cs591 = new Course(1234, "CS591", new ArrayList<>(), new ArrayList<>());
 
     public static void main(String[] args) {
         launch(args);
+
     }
 
     public void deletePerson()
@@ -178,13 +183,16 @@ public class MainUI extends Application {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                data.add(new Person(
+                Person newPerson = new Person(
                         addFirstName.getText(),
                         addLastName.getText(),
-                        addBUID.getText()));
+                        addBUID.getText());
+                data.add(newPerson);
                 addFirstName.clear();
                 addLastName.clear();
                 addBUID.clear();
+
+                cs591.addStudent(newPerson.getBUID(), newPerson.getFirstName(), newPerson.getLastName(), 0);
             }
         });
 
