@@ -1,5 +1,6 @@
 package ui;
 
+import core.Course;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +20,7 @@ import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
 import javax.print.DocFlavor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -28,6 +30,7 @@ public class MainUI extends Application {
     private final ObservableList<Person> data =
             FXCollections.observableArrayList();
     final HBox hb = new HBox();
+    private Course cs591 = new Course(1, "CS591", new ArrayList<>(), new ArrayList<>());
 
     public static void main(String[] args) {
         launch(args);
@@ -171,13 +174,15 @@ public class MainUI extends Application {
                 else if (addBUID.getText().length() == 0){
                     System.out.println("BUID cannot be empty");
                 } else {
-                    data.add(new Person(
+                    Person newPerson = new Person(
                             addFirstName.getText(),
                             addLastName.getText(),
-                            addBUID.getText()));
+                            addBUID.getText());
+                    data.add(newPerson);
                     addFirstName.clear();
                     addLastName.clear();
                     addBUID.clear();
+                    cs591.addStudent(newPerson.getBUID(), newPerson.getFirstName(), newPerson.getLastName(), 0);
                 }
             }
         });
