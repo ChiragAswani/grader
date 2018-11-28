@@ -1,12 +1,13 @@
 package core;
+import DAO.StudentDAO;
 import Student.Student;
+import database.StudentDB;
 import grades.Gradable;
+import grades.Grade;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-
-
-import java.util.ArrayList;
 
 public class Course {
 
@@ -14,7 +15,11 @@ public class Course {
     private List<Gradable> gradableList;
     private String courseName;
     private String courseID;
-    public Course(){}
+
+    public Course(){
+
+    }
+
     public Course(String ID,String name,List<Student> sList,List<Gradable> gList){
         courseID=ID;
         courseName=name;
@@ -52,5 +57,36 @@ public class Course {
 
     public void setCourseID(String courseID) {
         this.courseID = courseID;
+    }
+
+    // Add student to class from on click event in the UI
+    public void addStudent(String studentID,String firstName,String lastName, int customWeights){
+        Student newStudent = new Student(courseID, studentID, firstName, lastName, customWeights);
+        studentList.add(newStudent);
+        StudentDAO sdb=new StudentDB();
+        try{
+            sdb.addStudentToCourse(newStudent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void editStudent(String studentID, String firstName, String lastName, int customWeights){
+        int numStudents = studentList.size();
+        for(int i=0; i<numStudents; i++) {
+            if (studentList.get(i).getStudentID().equals(studentID)) {
+                Student currentStudent = studentList.get(i);
+                currentStudent.setFirstName(firstName);
+                currentStudent.setLastName(lastName);
+                currentStudent.setCustomized(customWeights);
+                studentList.set(i, currentStudent);
+                StudentDAO sdb=new StudentDB();
+                try{
+                    sdb.updateStudent(currentStudent);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
