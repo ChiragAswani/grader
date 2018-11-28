@@ -66,6 +66,7 @@ public class GradableDB extends DBconn implements GradableDAO {
     @Override
     public Gradable addGradableToOneCourse(Gradable g) throws Exception{
         int gid=insertGradable(g);
+        String test="test";
         g.setgID(gid);
         Connection conn=DBconn.getConnection();
         String sql="insert into distribution(courseid,gradableid,weighting_undergraduate,weighting_graduate,customized) values(?,?,?,?,?)";
