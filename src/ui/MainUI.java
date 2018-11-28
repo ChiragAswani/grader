@@ -34,7 +34,7 @@ public class MainUI extends Application {
     private final ObservableList<Person> data =
             FXCollections.observableArrayList();
     final HBox hb = new HBox();
-    private Course cs591 = new Course(1234, "CS591", new ArrayList<>(), new ArrayList<>());
+    private Course cs591 = new Course(1, "CS591", new ArrayList<>(), new ArrayList<>());
 
     public static void main(String[] args) {
         launch(args);

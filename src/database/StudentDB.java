@@ -66,11 +66,12 @@ public class StudentDB extends DBconn implements StudentDAO {
     @Override
     public boolean checkStudentInDB(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="select from student where studentid=?";
+        String sql="select * from student where studentid=?";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1, s.getStudentID());
         ResultSet rs=  stmt.executeQuery();
         if (rs.next()){
+            System.out.println("no student before");
             return true;
         }
         return false;
@@ -80,6 +81,7 @@ public class StudentDB extends DBconn implements StudentDAO {
     public void addStudentToCourse(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
         if (!checkStudentInDB(s)){
+            System.out.println("insert student");
             insertStudent(s);
         }
         String sql="INSERT INTO register(studentid,courseid) values(?,?)";
