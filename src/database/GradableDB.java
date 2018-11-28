@@ -127,6 +127,19 @@ public class GradableDB extends DBconn implements GradableDAO {
         stmt.setString(3,g.getType());
         stmt.setInt(4,g.getgID());
         stmt.executeUpdate();
+
+        String sql2="update distribution \n"+
+                "set weighting_undergraduate=?,weighting_graduate=?,customized=? \n"+
+                "where courseid=? and gradableid=?";
+
+        PreparedStatement stmt2=conn.prepareStatement(sql2);
+        stmt2.setBigDecimal(1,g.getWeight_ungrad());
+        stmt2.setBigDecimal(2,g.getWeight_grad());
+        stmt2.setInt(3,g.getCustomized());
+        stmt2.setInt(4,g.getCourseID());
+        stmt2.setInt(5,g.getgID());
+        stmt2.executeUpdate();
+        DBconn.close(stmt2);
         DBconn.closeAll(conn,stmt);
     }
 }
