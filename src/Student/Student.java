@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
-    private String courseID;
+    private int courseID;
     private String studentID;
     private String firstName;
     private String lastName;
@@ -18,7 +18,7 @@ public class Student {
     private List<BigDecimal> customWeights;
 
     public Student(){}
-    public Student(String cID,String ID,String FN,String LN, int c,List<Grade> g){
+    public Student(int cID,String ID,String FN,String LN, int c,List<Grade> g){
         courseID=cID;
         studentID=ID;
         firstName=FN;
@@ -26,7 +26,7 @@ public class Student {
         customized=c;
         gradeList=g;
     }
-    public Student(String cID,String ID,String FN,String LN, int c){
+    public Student(int cID,String ID,String FN,String LN, int c){
         courseID=cID;
         studentID=ID;
         firstName=FN;
@@ -35,11 +35,11 @@ public class Student {
         gradeList= new ArrayList<>();
     }
 
-    public String getCourseID() {
+    public int getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(String courseID) {
+    public void setCourseID(int courseID) {
         this.courseID = courseID;
     }
 
