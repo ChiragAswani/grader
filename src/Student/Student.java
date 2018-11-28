@@ -2,18 +2,23 @@ package Student;
 
 import grades.Grade;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
-    private int courseID;
+    private String courseID;
     private String studentID;
     private String firstName;
     private String lastName;
-    private int customized;
     private List<Grade> gradeList;
     private String type;
+
+    private int customized;
+    private List<BigDecimal> customWeights;
+
     public Student(){}
-    public Student(int cID,String ID,String FN,String LN, int c,List<Grade> g){
+    public Student(String cID,String ID,String FN,String LN, int c,List<Grade> g){
         courseID=cID;
         studentID=ID;
         firstName=FN;
@@ -21,12 +26,20 @@ public class Student {
         customized=c;
         gradeList=g;
     }
+    public Student(String cID,String ID,String FN,String LN, int c){
+        courseID=cID;
+        studentID=ID;
+        firstName=FN;
+        lastName=LN;
+        customized=c;
+        gradeList= new ArrayList<>();
+    }
 
-    public int getCourseID() {
+    public String getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(int courseID) {
+    public void setCourseID(String courseID) {
         this.courseID = courseID;
     }
 
@@ -58,8 +71,8 @@ public class Student {
         return customized;
     }
 
-    public void setCostomized(int costomized) {
-        this.customized = costomized;
+    public void setCustomized(int customized) {
+        this.customized = customized;
     }
 
     public List<Grade> getGradeList() {
