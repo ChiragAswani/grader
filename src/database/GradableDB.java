@@ -82,7 +82,7 @@ public class GradableDB extends DBconn implements GradableDAO {
     @Override
     public void removeGradableFromOneCourse(Gradable g) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="delete from distribution where gradeableid=? and courseid=?";
+        String sql="delete from distribution where gradableid=? and courseid=?";
         PreparedStatement stmt =conn.prepareStatement(sql);
         stmt.setInt(1,g.getgID());
         stmt.setInt(2,g.getCourseID());
@@ -109,7 +109,7 @@ public class GradableDB extends DBconn implements GradableDAO {
     @Override
     public void deleteGradable(Gradable g)throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="delete from gradable where gradeableid=?";
+        String sql="delete from gradable where gradableid=?";
         PreparedStatement stmt =conn.prepareStatement(sql);
         stmt.setInt(1,g.getgID());
         stmt.executeUpdate();
