@@ -21,6 +21,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableView.TableViewSelectionModel;
+import java.util.Arrays;
 
 public class MainUI extends Application {
 
@@ -33,8 +36,37 @@ public class MainUI extends Application {
         launch(args);
     }
 
+    public void deletePerson()
+    {
+        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
+
+        // Check, if any rows are selected
+        if (tsm.isEmpty())
+        {
+            System.out.println("Please select a row to delete.");
+            return;
+        }
+
+        // Get all selected row indices in an array
+        ObservableList<Integer> list = tsm.getSelectedIndices();
+
+        Integer[] selectedIndices = new Integer[list.size()];
+        selectedIndices = list.toArray(selectedIndices);
+
+        // Sort the array
+        Arrays.sort(selectedIndices);
+
+        // Delete rows (last to first)
+        for(int i = selectedIndices.length - 1; i >= 0; i--)
+        {
+            tsm.clearSelection(selectedIndices[i].intValue());
+            table.getItems().remove(selectedIndices[i].intValue());
+        }
+    }
+
     @Override
     public void start(Stage stage) {
+
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
         stage.setWidth(450);
@@ -116,6 +148,16 @@ public class MainUI extends Application {
                 }
         );
 
+        // Create the Delete Button and add Event-Handler
+        Button deleteButton = new Button("Delete Selected Rows");
+        deleteButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override public void handle(ActionEvent e)
+            {
+                deletePerson();
+            }
+        });
+
         table.setItems(data);
         table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol, AssignmentCol);
 
@@ -146,7 +188,7 @@ public class MainUI extends Application {
             }
         });
 
-        hb.getChildren().addAll(addFirstName, addLastName, addBUID, addButton);
+        hb.getChildren().addAll(addFirstName, addLastName, addBUID, addButton, deleteButton);
         hb.setSpacing(3);
 
         final VBox vbox = new VBox();
@@ -162,5 +204,8 @@ public class MainUI extends Application {
         TableColumn assignment1Col = new TableColumn("Assignment1");
         TableColumn assignment2Col = new TableColumn("Assignment2");
         AssignmentCol.getColumns().addAll(assignment1Col, assignment2Col);
+        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
+        tsm.setSelectionMode(SelectionMode.MULTIPLE);
+
     }
 }
