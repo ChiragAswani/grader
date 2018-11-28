@@ -107,7 +107,7 @@ public class StudentDB extends DBconn implements StudentDAO {
         stmt.setString(2,s.getFirstName());
         stmt.setString(3,s.getLastName());
         stmt.setString(4,s.getType());
-        stmt.setInt(5,s.getCostomized());
+        stmt.setInt(5,s.getCustomized());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
     }
@@ -119,7 +119,7 @@ public class StudentDB extends DBconn implements StudentDAO {
         stmt.setString(1,s.getLastName());
         stmt.setString(2,s.getFirstName());
         stmt.setString(3,s.getType());
-        stmt.setInt(4,s.getCostomized());
+        stmt.setInt(4,s.getCustomized());
         stmt.setString(5,s.getStudentID());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);

@@ -1,4 +1,4 @@
-package com.company;
+package ui;
 
 import javafx.beans.property.SimpleStringProperty;
 
