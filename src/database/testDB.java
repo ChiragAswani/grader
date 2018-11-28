@@ -20,8 +20,8 @@ public class testDB {
 
 
         try{
-            Gradable gradable=new Gradable("CS591D1",-1,"test",new BigDecimal(100),null,null,0,"hw");
-            gadb.addGradableToOneCourse(gradable);
+            Gradable gradable=new Gradable(1,-1,"test",new BigDecimal(100),null,null,0,"hw");
+            gadb.removeGradableFromOneCourse(gradable);
         }catch (Exception e){
             e.printStackTrace();
         }

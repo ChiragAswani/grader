@@ -12,11 +12,11 @@ import grades.Grade;
 
 public class StudentDB extends DBconn implements StudentDAO {
     @Override
-    public List<Student> findAllStudentInCourse(String courseID) throws Exception {
+    public List<Student> findAllStudentInCourse(int courseID) throws Exception {
         Connection conn=DBconn.getConnection();
         String sql="select * from student s, register r where r.studentid=s.studentid and r.courseid=?";
         PreparedStatement stmt= conn.prepareStatement(sql);
-        stmt.setString(1,courseID);
+        stmt.setInt(1,courseID);
         ResultSet rs=    stmt.executeQuery();
         List<Student> StudentList=new ArrayList<Student>();
         while(rs.next()) {
@@ -27,7 +27,7 @@ public class StudentDB extends DBconn implements StudentDAO {
                     rs.getString("studentid"),
                     rs.getString("first_name"),
                     rs.getString("last_name"),
-                    rs.getInt("costomized"),
+                    rs.getInt("customized"),
                     glist
             );
             StudentList.add(s);
@@ -37,11 +37,11 @@ public class StudentDB extends DBconn implements StudentDAO {
     }
 
     @Override
-    public Student findOneStudentInCourse(String courseID, String studentID) throws Exception {
+    public Student findOneStudentInCourse(int courseID, String studentID) throws Exception {
         Connection conn=DBconn.getConnection();
         String sql="select * from student s, register r where r.studentid=s.studentid and r.courseid=? and r.studentid=?";
         PreparedStatement stmt= conn.prepareStatement(sql);
-        stmt.setString(1,courseID);
+        stmt.setInt(1,courseID);
         stmt.setString(2,studentID);
         ResultSet rs=    stmt.executeQuery();
         Student student=null;
@@ -53,7 +53,7 @@ public class StudentDB extends DBconn implements StudentDAO {
                     rs.getString("studentid"),
                     rs.getString("first_name"),
                     rs.getString("last_name"),
-                    rs.getInt("costomized"),
+                    rs.getInt("customized"),
                     glist
             );
             student=s;
@@ -68,7 +68,7 @@ public class StudentDB extends DBconn implements StudentDAO {
         String sql="INSERT INTO register(studentid,courseid) values(?,?)";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
-        stmt.setString(2,s.getCourseID());
+        stmt.setInt(2,s.getCourseID());
         stmt.executeUpdate();
         List<Grade> glist=s.getGradeList();
         if (glist!=null){
@@ -93,7 +93,7 @@ public class StudentDB extends DBconn implements StudentDAO {
         String sql="Delete from register where studentid=? and courseid=? ";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
-        stmt.setString(2,s.getCourseID());
+        stmt.setInt(2,s.getCourseID());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
     }
@@ -101,7 +101,7 @@ public class StudentDB extends DBconn implements StudentDAO {
     @Override
     public void insertStudent(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="INSERT INTO student(studentid,first_name,last_name,type,costomized) VALUES(?,?,?,?,?)";
+        String sql="INSERT INTO student(studentid,first_name,last_name,type,customized) VALUES(?,?,?,?,?)";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
         stmt.setString(2,s.getFirstName());
@@ -114,7 +114,7 @@ public class StudentDB extends DBconn implements StudentDAO {
     @Override
     public void updateStudent(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="update Student set last_name=?, first_name=? , type=?, costomized=? where  studentid=?";
+        String sql="update Student set last_name=?, first_name=? , type=?, customized=? where  studentid=?";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getLastName());
         stmt.setString(2,s.getFirstName());
