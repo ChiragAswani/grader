@@ -62,9 +62,26 @@ public class StudentDB extends DBconn implements StudentDAO {
         return student;
     }
 
+
+    @Override
+    public boolean checkStudentInDB(Student s) throws Exception{
+        Connection conn=DBconn.getConnection();
+        String sql="select from student where studentid=?";
+        PreparedStatement stmt=conn.prepareStatement(sql);
+        stmt.setString(1, s.getStudentID());
+        ResultSet rs=  stmt.executeQuery();
+        if (rs.next()){
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void addStudentToCourse(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
+        if (!checkStudentInDB(s)){
+            insertStudent(s);
+        }
         String sql="INSERT INTO register(studentid,courseid) values(?,?)";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
