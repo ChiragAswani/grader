@@ -1,6 +1,5 @@
 package ui;
 
-import core.Course;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,24 +8,19 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
-import java.util.ArrayList;
+import javax.print.DocFlavor;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class MainUI extends Application {
 
@@ -34,11 +28,9 @@ public class MainUI extends Application {
     private final ObservableList<Person> data =
             FXCollections.observableArrayList();
     final HBox hb = new HBox();
-    private Course cs591 = new Course(1, "CS591", new ArrayList<>(), new ArrayList<>());
 
     public static void main(String[] args) {
         launch(args);
-
     }
 
     public void deletePerson()
@@ -137,22 +129,6 @@ public class MainUI extends Application {
                 }
         );
 
-        TableColumn AssignmentCol = new TableColumn("Assignments");
-        AssignmentCol.setMinWidth(200);
-        AssignmentCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("Assignments"));
-        AssignmentCol.setCellFactory(cellFactory);
-        AssignmentCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setBUID(t.getNewValue());
-                    }
-                }
-        );
-
         // Create the Delete Button and add Event-Handler
         Button deleteButton = new Button("Delete Selected Rows");
         deleteButton.setOnAction(new EventHandler<ActionEvent>()
@@ -164,7 +140,7 @@ public class MainUI extends Application {
         });
 
         table.setItems(data);
-        table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol, AssignmentCol);
+        table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol);
 
         final TextField addFirstName = new TextField();
         addFirstName.setPromptText("First Name");
@@ -172,46 +148,92 @@ public class MainUI extends Application {
         final TextField addLastName = new TextField();
         addLastName.setMaxWidth(lastNameCol.getPrefWidth());
         addLastName.setPromptText("Last Name");
+
         final TextField addBUID = new TextField();
         addBUID.setMaxWidth(BUIDCol.getPrefWidth());
         addBUID.setPromptText("BUID");
-        final TextField addAssignment = new TextField();
-        addAssignment.setMaxWidth(AssignmentCol.getPrefWidth());
-        addAssignment.setPromptText("Assignment");
+
+        final TextField addGradingCategory = new TextField();
+        addGradingCategory.setPromptText("Add Grading Category");
+
+
 
         final Button addButton = new Button("Add");
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                Person newPerson = new Person(
-                        addFirstName.getText(),
-                        addLastName.getText(),
-                        addBUID.getText());
-                data.add(newPerson);
-                addFirstName.clear();
-                addLastName.clear();
-                addBUID.clear();
+                if (addFirstName.getText().length() == 0){
+                    System.out.println("First Name cannot be empty");
+                }
+                else if (addLastName.getText().length() == 0){
+                    System.out.println("Last Name cannot be empty");
+                }
+                else if (addBUID.getText().length() == 0){
+                    System.out.println("BUID cannot be empty");
+                } else {
+                    data.add(new Person(
+                            addFirstName.getText(),
+                            addLastName.getText(),
+                            addBUID.getText()));
+                    addFirstName.clear();
+                    addLastName.clear();
+                    addBUID.clear();
+                }
+            }
+        });
 
-                cs591.addStudent(newPerson.getBUID(), newPerson.getFirstName(), newPerson.getLastName(), 0);
+        final Button addGradingCategoryButton = new Button("Add Grading Category");
+        addGradingCategoryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                if (addGradingCategory.getText().length() == 0){
+                    System.out.println("Grading Category cannot be empty");
+                } else {
+                    String gradingCategory = addGradingCategory.getText();
+                    addGradingCategory.clear();
+                    TableColumn gC = new TableColumn(gradingCategory);
+                    gC.setMinWidth(100);
+                    gC.setCellValueFactory(new PropertyValueFactory<Person, String>(gradingCategory));
+                    gC.setCellFactory(cellFactory);
+                    Button addAssignment = new Button("+");
+                    addAssignment.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override public void handle(ActionEvent e)
+                        {
+                            TextInputDialog dialog = new TextInputDialog();
+                            dialog.setTitle("Assignment Input");
+                            dialog.setHeaderText("Enter Assignment (i.e. HW2)");
+                            dialog.setContentText("Assignment:");
+                            Optional<String> result = dialog.showAndWait();
+                            if (result.isPresent()){
+                                TableColumn section = new TableColumn(result.get());
+                                Button deleteAssignmentSection = new Button("-");
+                                section.setGraphic(deleteAssignmentSection);
+                                gC.getColumns().addAll(section);
+                            }
+                        }
+                    });
+                    gC.setGraphic(addAssignment);
+                    table.getColumns().addAll(gC);
+                }
             }
         });
 
         hb.getChildren().addAll(addFirstName, addLastName, addBUID, addButton, deleteButton);
         hb.setSpacing(3);
 
+
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
         vbox.getChildren().addAll(label, table, hb);
+        vbox.getChildren().addAll(addGradingCategory, addGradingCategoryButton);
 
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
 
         stage.setScene(scene);
         stage.show();
 
-        TableColumn assignment1Col = new TableColumn("Assignment1");
-        TableColumn assignment2Col = new TableColumn("Assignment2");
-        AssignmentCol.getColumns().addAll(assignment1Col, assignment2Col);
+
         TableViewSelectionModel<Person> tsm = table.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.MULTIPLE);
 
