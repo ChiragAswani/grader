@@ -19,4 +19,6 @@ public interface StudentDAO {
     // update student basic information (type,name)
     public void deleteStudent(Student s) throws Exception;
     // delete student from database
+
+    public boolean checkStudentInDB(Student s) throws Exception;
 }

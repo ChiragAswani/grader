@@ -6,6 +6,7 @@ import grades.Gradable;
 import grades.Grade;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -69,6 +70,7 @@ public class Course {
         }catch (Exception e){
             e.printStackTrace();
         }
+        System.out.println(Arrays.toString(studentList.toArray()));
     }
 
     public void editStudent(String studentID, String firstName, String lastName, int customWeights){
