@@ -60,7 +60,7 @@ public class Course {
     }
 
     // Add student to class from on click event in the UI
-    public void addStudent(String studentID,String firstName,String lastName, boolean customWeights){
+    public void addStudent(String studentID,String firstName,String lastName, int customWeights){
         Student newStudent = new Student(courseID, studentID, firstName, lastName, customWeights);
         studentList.add(newStudent);
         StudentDAO sdb=new StudentDB();
@@ -69,7 +69,24 @@ public class Course {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
 
-
+    public void editStudent(String studentID, String firstName, String lastName, int customWeights){
+        int numStudents = studentList.size();
+        for(int i=0; i<numStudents; i++) {
+            if (studentList.get(i).getStudentID().equals(studentID)) {
+                Student currentStudent = studentList.get(i);
+                currentStudent.setFirstName(firstName);
+                currentStudent.setLastName(lastName);
+                currentStudent.setCustomized(customWeights);
+                studentList.set(i, currentStudent);
+                StudentDAO sdb=new StudentDB();
+                try{
+                    sdb.updateStudent(currentStudent);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

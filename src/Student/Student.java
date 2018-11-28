@@ -2,6 +2,7 @@ package Student;
 
 import grades.Grade;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +11,14 @@ public class Student {
     private String studentID;
     private String firstName;
     private String lastName;
-    private boolean customized;
     private List<Grade> gradeList;
     private String type;
+
+    private int customized;
+    private List<BigDecimal> customWeights;
+
     public Student(){}
-    public Student(String cID,String ID,String FN,String LN, boolean c,List<Grade> g){
+    public Student(String cID,String ID,String FN,String LN, int c,List<Grade> g){
         courseID=cID;
         studentID=ID;
         firstName=FN;
@@ -22,7 +26,7 @@ public class Student {
         customized=c;
         gradeList=g;
     }
-    public Student(String cID,String ID,String FN,String LN, boolean c){
+    public Student(String cID,String ID,String FN,String LN, int c){
         courseID=cID;
         studentID=ID;
         firstName=FN;
@@ -63,11 +67,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public boolean getCustomized() {
+    public int getCustomized() {
         return customized;
     }
 
-    public void setCustomized(boolean customized) {
+    public void setCustomized(int customized) {
         this.customized = customized;
     }
 
