@@ -10,9 +10,9 @@ public class Course {
     private List<Student> studentList;
     private List<Gradable> gradableList;
     private String courseName;
-    private String courseID;
+    private int courseID;
     public Course(){}
-    public Course(String ID,String name,List<Student> sList,List<Gradable> gList){
+    public Course(int ID,String name,List<Student> sList,List<Gradable> gList){
         courseID=ID;
         courseName=name;
         studentList=sList;
@@ -43,11 +43,12 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public String getCourseID() {
+
+    public int getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(String courseID) {
+    public void setCourseID(int courseID) {
         this.courseID = courseID;
     }
 }

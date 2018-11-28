@@ -5,24 +5,24 @@ import java.math.BigDecimal;
 public class Gradable {
     private String assignmentName;
     private int gID;
-    private String courseID;
+    private int courseID;
     private BigDecimal maxScore;
     private BigDecimal weight_ungrad;
     private BigDecimal weight_grad;
     public double receivedScore;
-    private int costomized;
+    private int customized;
     private String type;
     //public double receivedScore;
     public Gradable(){}
 
-    public Gradable (String courseID,int gradableId, String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int c, String t){
+    public Gradable (int courseID,int gradableId, String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int c, String t){
         this.courseID=courseID;
         this.gID=gradableId;
         this.assignmentName = assignmentName;
         this.maxScore = maxScore;
         this.weight_ungrad=weightU;
         this.weight_grad=weightG;
-        this.costomized=c;
+        this.customized=c;
         this.type=t;
         //this.receivedScore = receivedScore;
     }
@@ -75,19 +75,19 @@ public class Gradable {
         this.receivedScore = receivedScore;
     }
 
-    public int getCostomized() {
-        return costomized;
+    public int getCustomized() {
+        return customized;
     }
 
-    public void setCostomized(int costomized) {
-        this.costomized = costomized;
+    public void setCustomized(int customized) {
+        this.customized = customized;
     }
 
-    public String getCourseID() {
+    public int getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(String courseID) {
+    public void setCourseID(int courseID) {
         this.courseID = courseID;
     }
 

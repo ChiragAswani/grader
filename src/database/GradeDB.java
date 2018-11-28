@@ -14,12 +14,12 @@ import java.util.List;
 
 public class GradeDB extends DBconn implements GradeDAO {
     @Override
-    public List<Grade> findOneStudentAllGradeInOneCourse(String studentid, String courseid) throws Exception {
+    public List<Grade> findOneStudentAllGradeInOneCourse(String studentid, int courseid) throws Exception {
         Connection conn=DBconn.getConnection();
         String sql="select * from grade g, distribution d \n" +
                 "where  g.gradableid=d.gradableid and d.courseid= ? and g.studentid=? ";
         PreparedStatement stmt= conn.prepareStatement(sql);
-        stmt.setString(1,courseid);
+        stmt.setInt(1,courseid);
         stmt.setString(2,studentid);
         //System.out.println(stmt);
         ResultSet rs=    stmt.executeQuery();

@@ -5,28 +5,28 @@ import grades.Grade;
 import java.util.List;
 
 public class Student {
-    private String courseID;
+    private int courseID;
     private String studentID;
     private String firstName;
     private String lastName;
-    private int costomized;
+    private int customized;
     private List<Grade> gradeList;
     private String type;
     public Student(){}
-    public Student(String cID,String ID,String FN,String LN, int c,List<Grade> g){
+    public Student(int cID,String ID,String FN,String LN, int c,List<Grade> g){
         courseID=cID;
         studentID=ID;
         firstName=FN;
         lastName=LN;
-        costomized=c;
+        customized=c;
         gradeList=g;
     }
 
-    public String getCourseID() {
+    public int getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(String courseID) {
+    public void setCourseID(int courseID) {
         this.courseID = courseID;
     }
 
@@ -54,12 +54,12 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public int getCostomized() {
-        return costomized;
+    public int getCustomized() {
+        return customized;
     }
 
     public void setCostomized(int costomized) {
-        this.costomized = costomized;
+        this.customized = costomized;
     }
 
     public List<Grade> getGradeList() {
