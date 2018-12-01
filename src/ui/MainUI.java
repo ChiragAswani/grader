@@ -80,6 +80,7 @@ public class MainUI extends Application {
         {
             tsm.clearSelection(selectedIndices[i].intValue());
             table.getItems().remove(selectedIndices[i].intValue());
+//            course.de
         }
     }
 

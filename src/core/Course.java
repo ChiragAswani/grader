@@ -77,6 +77,17 @@ public class Course {
         System.out.println(Arrays.toString(studentList.toArray()));
     }
 
+    public void deleteStudent(String studentID){
+        int index = findStudentIndex(studentID);
+        StudentDAO sdb=new StudentDB();
+        try{
+
+            sdb.removeStudentFromCourse(studentList.get(index));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void editStudent(String studentID, String firstName, String lastName, int customWeights){
         int studentIndex = findStudentIndex(studentID);
         Student currentStudent = studentList.get(studentIndex);
