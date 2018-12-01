@@ -1,8 +1,6 @@
 package Student;
 
-import DAO.GradableDAO;
 import DAO.GradeDAO;
-import database.GradableDB;
 import database.GradeDB;
 import grades.Grade;
 

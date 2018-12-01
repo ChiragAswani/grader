@@ -1,15 +1,14 @@
 package core;
+
 import DAO.GradableDAO;
-import DAO.GradeDAO;
 import DAO.StudentDAO;
 import Student.Student;
 import database.GradableDB;
-import database.GradeDB;
 import database.StudentDB;
 import grades.Gradable;
-import grades.Grade;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +21,8 @@ public class Course {
     private int courseID;
 
     public Course(){
-
+        studentList=new ArrayList<>();
+        gradableList= new ArrayList<>();
     }
 
     public Course(int ID,String name,List<Student> sList,List<Gradable> gList){

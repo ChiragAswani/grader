@@ -10,10 +10,14 @@ import java.util.stream.Collectors;
 
 public class Home {
     List<Course> courses;
+    private final static String DB_NAME = "oop_gradingsys";
 
     public Boolean login(String pass){
-        // Try auth
-        // if username and password match return true else false
+        // Check if DB is set up, if not then set it up
+        // Try auth if password match return true else false
+
+        initializeDatabase();
+
         HomeDAO auth = new HomeDB();
         try{
             if(auth.checkPasswordExist()){
@@ -37,6 +41,7 @@ public class Home {
             e.printStackTrace();
         }
     }
+
     public List<String[]> seeCourses(){
         //Return list of tuples of courseID and courseName for all of users courses
         CourseDAO cdb = new CourseDB();
@@ -93,6 +98,16 @@ public class Home {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void initializeDatabase(){
+        HomeDAO homeDB = new HomeDB();
+        try{
+            homeDB.checkDB(DB_NAME);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
