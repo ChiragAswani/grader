@@ -3,6 +3,7 @@ package ui;
 import Student.Student;
 import com.sun.tools.javac.Main;
 import core.Course;
+import grades.Gradable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -43,6 +44,7 @@ public class MainUI extends Application {
     private Course course;
     public MainUI(Course c){
          this.course = c;
+        readInCourse();
     }
 
     public static void main(String[] args) {
@@ -355,5 +357,23 @@ public class MainUI extends Application {
         TableViewSelectionModel<Person> tsm = table.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.MULTIPLE);
 
+    }
+
+    public void readInCourse(){
+        ArrayList<String> categories = new ArrayList<>();
+        for (Gradable gradable : course.getGradableList()) {
+            String currentCategory = gradable.getType();
+            if(!categories.contains(currentCategory)){
+                categories.add(currentCategory);
+            }
+        }
+
+        for (Student student : course.getStudentList()) {
+            Person newPerson = new Person(
+                    student.getFirstName(),
+                    student.getLastName(),
+                    student.getStudentID());
+            data.add(newPerson);
+        }
     }
 }
