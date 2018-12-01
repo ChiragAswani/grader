@@ -10,6 +10,7 @@ import grades.Gradable;
 import grades.Grade;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class Course {
     private int courseID;
 
     public Course(){
-
+        studentList=new ArrayList<>();
+        gradableList= new ArrayList<>();
     }
 
     public Course(int ID,String name,List<Student> sList,List<Gradable> gList){
