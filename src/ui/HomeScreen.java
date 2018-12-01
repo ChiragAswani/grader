@@ -1,6 +1,7 @@
 package ui;
 
 import core.Course;
+import core.Home;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import ui.CourseList;
 
 import javax.print.DocFlavor;
 import java.util.ArrayList;
@@ -44,14 +46,21 @@ public class HomeScreen extends Application {
         password.setPromptText("Password");
 
         Button login = new Button("Login");
-        login.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override public void handle(ActionEvent e)
-            {
-                if(true){
-                    MainUI ui = new MainUI();
+        login.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Home h = new Home();
+                Boolean isPasswordValid = h.login(password.getText());
+                if(!isPasswordValid){
+                    stage.close();
+                    CourseList courseList = new CourseList();
                     Stage a = new Stage();
-                    ui.start(a);
+                    courseList.start(a);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText("Authentication Error");
+                    alert.setContentText("Invalid Password");
+                    alert.showAndWait();
                 }
             }
         });
