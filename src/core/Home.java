@@ -1,9 +1,10 @@
 package core;
 
 import DAO.CourseDAO;
+import DAO.HomeDAO;
 import database.CourseDB;
+import database.HomeDB;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,11 +14,24 @@ public class Home {
     public Boolean login(String pass){
         // Try auth
         // if username and password match return true else false
+        HomeDAO auth = new HomeDB();
+        try{
+            return auth.checkUserInDB(pass, pass);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         return false;
     }
 
     public void changeLogin(String pass){
-        //
+        HomeDAO auth = new HomeDB();
+        try{
+            auth.checkUserInDB(pass, pass);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
     public List<Integer> seeCourses(){
         //
@@ -34,8 +48,16 @@ public class Home {
         }
         return null;
     }
-    public void loadCourse(){
+    public Course loadCourse(int courseId){
+        CourseDAO cdb = new CourseDB();
+        try{
+           Course course = cdb.findOneCourse(Integer.toString(courseId));
+           return course;
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
