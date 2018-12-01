@@ -94,6 +94,7 @@ public class Course {
     public int addGradable(String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int customized, String gradableCategory){
 //        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
         Gradable newGradable = new Gradable();
+        newGradable.setCourseID(courseID);
         newGradable.setAssignmentName(assignmentName);
         newGradable.setMaxScore(maxScore);
         newGradable.setWeight_grad(weightG);
