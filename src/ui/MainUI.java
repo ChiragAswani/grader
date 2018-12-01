@@ -246,6 +246,7 @@ public class MainUI extends Application {
                     String gradingCategory = addGradingCategory.getText();
                     addGradingCategory.clear();
                     addNewGradingCategoryToTable(gradingCategory);
+
                 }
             }
         });
@@ -272,7 +273,6 @@ public class MainUI extends Application {
     }
 
     public void readInCourse(){
-//        ArrayList<String> categories = new ArrayList<>();
         HashMap<String, ArrayList<Gradable>> categories = new HashMap<>();
         for (Gradable gradable : course.getGradableList()) {
             String currentCategory = gradable.getType();
@@ -306,7 +306,6 @@ public class MainUI extends Application {
     }
 
     public TableColumn addNewGradingCategoryToTable( String gradingCategory){
-
 
         TableColumn gC = new TableColumn(gradingCategory);
         gC.setMinWidth(100);
@@ -343,7 +342,6 @@ public class MainUI extends Application {
 
                 final Text percent = new Text();
                 percent.setText("%");
-
                 final Text percent2 = new Text();
                 percent2.setText("%");
 
@@ -382,6 +380,7 @@ public class MainUI extends Application {
                         course.addGradable(assignmentName, maxScore , ugradWeight, gradWeight, 0, gC.getText());
 
                         addNewGradable(assignmentName, gC);
+
                     }
                 }
 
@@ -398,6 +397,15 @@ public class MainUI extends Application {
 
     public void addNewGradable(String assignmentName, TableColumn gC){
         TableColumn section = new TableColumn(assignmentName);
+        section.setMinWidth(100);
+        section.setCellFactory(cellFactory);
+        section.setOnEditCommit(
+                new EventHandler<CellEditEvent<Person, String>>() {
+                    @Override
+                    public void handle(CellEditEvent<Person, String> t) {
+                    }
+                }
+        );
         gC.getColumns().addAll(section);
     }
 }
