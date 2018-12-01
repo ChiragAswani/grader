@@ -274,6 +274,9 @@ public class MainUI extends Application {
                             final Text percent = new Text();
                             percent.setText("%");
 
+                            final Text percent2 = new Text();
+                            percent2.setText("%");
+
 
                             grid.add(new Label("Add Assignment Name"), 0, 0);
                             grid.add(addAssignmentName, 1, 0);
@@ -281,6 +284,7 @@ public class MainUI extends Application {
                             grid.add(addMaxScore, 1, 1);
                             grid.add(new Label("Undergraduate Weight"), 0, 2);
                             grid.add(addUgradWeight, 1, 2);
+                            grid.add(percent2, 2, 2);
                             grid.add(new Label("Graduate Weight"), 0, 3);
                             grid.add(addGradWeight, 1, 3);
                             grid.add(percent, 2, 3);
@@ -300,6 +304,8 @@ public class MainUI extends Application {
                                 else if (addUgradWeight.getText().length() == 0 && addGradWeight.getText().length() == 0){
                                     System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
                                 } else {
+                                    System.out.println(addAssignmentName.getText() + addMaxScore.getText() + addUgradWeight.getText() + addGradWeight.getText());
+
                                     TableColumn section = new TableColumn(result.get());
                                     section.setMinWidth(100);
                                     section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
