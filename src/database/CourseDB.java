@@ -41,11 +41,11 @@ public class CourseDB extends DBconn implements CourseDAO {
     }
 
     @Override
-    public Course findOneCourse(String courseID) throws Exception {
+    public Course findOneCourse(int courseID) throws Exception {
         Connection conn=DBconn.getConnection();
         String sql="select * from course where courseid=?";
         PreparedStatement stmt= conn.prepareStatement(sql);
-        stmt.setString(1,courseID);
+        stmt.setInt(1,courseID);
         ResultSet rs=    stmt.executeQuery();
         Course course=null;
         if(rs.next()) {
@@ -80,12 +80,14 @@ public class CourseDB extends DBconn implements CourseDAO {
         if (c.getStudentList()!=null && c.getStudentList().size()!=0) {
             for (Student s : c.getStudentList()) {
                 StudentDAO sdb = new StudentDB();
+                s.setCourseID(c.getCourseID());
                 sdb.addStudentToCourse(s);
             }
         }
         if (c.getGradableList()!=null && c.getGradableList().size()!=0){
             for (int i=0;i<c.getGradableList().size();i++){
                 Gradable g=c.getGradableList().get(i);
+                g.setCourseID(c.getCourseID());
                 GradableDAO gdb=new GradableDB();
                 //  duplicate gradable may happen
                 int gid=gdb.insertGradable(g);
@@ -104,15 +106,17 @@ public class CourseDB extends DBconn implements CourseDAO {
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setInt(1,c.getCourseID());
         stmt.executeUpdate();
+        DBconn.closeAll(conn,stmt);
     }
 
     @Override
     public void updateCourse(Course c) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="Update course set cname=? where=?";
+        String sql="Update course set cname=? where courseid=?";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,c.getCourseName());
         stmt.setInt(2,c.getCourseID());
         stmt.executeUpdate();
+        DBconn.closeAll(conn,stmt);
     }
 }
