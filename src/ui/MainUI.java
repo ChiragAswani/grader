@@ -30,10 +30,7 @@ import javafx.util.Pair;
 
 import javax.print.DocFlavor;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MainUI extends Application {
 
@@ -42,9 +39,16 @@ public class MainUI extends Application {
             FXCollections.observableArrayList();
     final HBox hb = new HBox();
     private Course course;
+
+    Callback<TableColumn, TableCell> cellFactory =
+            new Callback<TableColumn, TableCell>() {
+                public TableCell call(TableColumn p) {
+                    return new EditingCell();
+                }
+            };
+
     public MainUI(Course c){
          this.course = c;
-        readInCourse();
     }
 
     public static void main(String[] args) {
@@ -92,12 +96,7 @@ public class MainUI extends Application {
 
         table.setEditable(true);
         table.setPrefWidth(800);
-        Callback<TableColumn, TableCell> cellFactory =
-                new Callback<TableColumn, TableCell>() {
-                    public TableCell call(TableColumn p) {
-                        return new EditingCell();
-                    }
-                };
+
 
         TableColumn firstNameCol = new TableColumn("First Name");
         firstNameCol.setMinWidth(100);
@@ -148,6 +147,8 @@ public class MainUI extends Application {
                 }
         );
 
+
+
         // Create the Delete Button and add Event-Handler
         Button deleteButton = new Button("Delete Selected Rows");
         deleteButton.setOnAction(new EventHandler<ActionEvent>()
@@ -160,6 +161,9 @@ public class MainUI extends Application {
 
         table.setItems(data);
         table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol);
+
+        //Read in everything from database
+        readInCourse();
 
         final Button addStudent = new Button("Add A New Student");
         addStudent.setOnAction(new EventHandler<ActionEvent>() {
@@ -241,108 +245,7 @@ public class MainUI extends Application {
                 } else {
                     String gradingCategory = addGradingCategory.getText();
                     addGradingCategory.clear();
-                    TableColumn gC = new TableColumn(gradingCategory);
-                    gC.setMinWidth(100);
-                    gC.setCellValueFactory(new PropertyValueFactory<Person, String>(gradingCategory));
-                    gC.setCellFactory(cellFactory);
-
-                    Button addAssignment = new Button("+");
-                    addAssignment.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override public void handle(ActionEvent e) {
-
-                            Dialog dialog = new Dialog();
-                            dialog.setTitle("Add a Gradeable");
-                            dialog.setHeaderText("Add a new assignment to: " + gC.getText());
-
-                            ButtonType addAssignment = new ButtonType("Add Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
-                            dialog.getDialogPane().getButtonTypes().addAll(addAssignment, ButtonType.CANCEL);
-
-                            GridPane grid = new GridPane();
-                            grid.setHgap(10);
-                            grid.setVgap(10);
-                            grid.setPadding(new Insets(20, 150, 10, 10));
-
-                            final TextField addAssignmentName = new TextField();
-                            addAssignmentName.setPromptText("i.e HW2");
-
-                            final TextField addMaxScore = new TextField();
-                            addMaxScore.setPromptText("i.e 100");
-
-                            final TextField addUgradWeight = new TextField();
-                            addUgradWeight.setPromptText("i.e 35");
-
-                            final TextField addGradWeight = new TextField();
-                            addGradWeight.setPromptText("i.e 15");
-
-                            final Text percent = new Text();
-                            percent.setText("%");
-
-                            final Text percent2 = new Text();
-                            percent2.setText("%");
-
-
-                            grid.add(new Label("Add Assignment Name"), 0, 0);
-                            grid.add(addAssignmentName, 1, 0);
-                            grid.add(new Label("How many points in this assignment out of?"), 0, 1);
-                            grid.add(addMaxScore, 1, 1);
-                            grid.add(new Label("Undergraduate Weight"), 0, 2);
-                            grid.add(addUgradWeight, 1, 2);
-                            grid.add(percent2, 2, 2);
-                            grid.add(new Label("Graduate Weight"), 0, 3);
-                            grid.add(addGradWeight, 1, 3);
-                            grid.add(percent, 2, 3);
-
-
-                            dialog.getDialogPane().setContent(grid);
-
-                            Optional<String> result = dialog.showAndWait();
-
-                            if (result.isPresent()){
-                                if (addAssignmentName.getText().length() == 0){
-                                    System.out.println("Assignment Name cannot be empty");
-                                }
-                                else if (addMaxScore.getText().length() == 0){
-                                    System.out.println("Maximum Score cannot be empty");
-                                }
-                                else if (addUgradWeight.getText().length() == 0 && addGradWeight.getText().length() == 0){
-                                    System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
-                                } else {
-                                    BigDecimal maxScore = BigDecimal.valueOf(Integer.parseInt(addMaxScore.getText())).movePointLeft(2);
-                                    BigDecimal ugradWeight = BigDecimal.valueOf(Integer.parseInt(addUgradWeight.getText())).movePointLeft(2);
-                                    BigDecimal gradWeight = BigDecimal.valueOf(Integer.parseInt(addGradWeight.getText())).movePointLeft(2);
-
-                                    course.addGradable(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, 0, gC.getText());
-
-//                                    TableColumn section = new TableColumn(addAssignmentName.getText());
-//                                    firstNameCol.setMinWidth(100);
-//                                    firstNameCol.setCellValueFactory(
-//                                            new PropertyValueFactory<Person, String>("firstName"));
-//                                    firstNameCol.setCellFactory(cellFactory);
-//                                    firstNameCol.setOnEditCommit(
-//                                            new EventHandler<CellEditEvent<Person, String>>() {
-//                                                @Override
-//                                                public void handle(CellEditEvent<Person, String> t) {
-//                                                    ((Person) t.getTableView().getItems().get(
-//                                                            t.getTablePosition().getRow())
-//                                                    ).setFirstName(t.getNewValue());
-//                                                }
-//                                            }
-//                                    );
-
-
-                                    TableColumn section = new TableColumn(addAssignmentName.getText());
-                                    Button deleteAssignmentSection = new Button("-");
-                                    section.setGraphic(deleteAssignmentSection);
-                                    gC.getColumns().addAll(section);
-                                }
-                            }
-
-
-
-                        }
-                    });
-                    gC.setGraphic(addAssignment);
-                    table.getColumns().addAll(gC);
+                    addNewGradingCategoryToTable(gradingCategory);
                 }
             }
         });
@@ -369,13 +272,29 @@ public class MainUI extends Application {
     }
 
     public void readInCourse(){
-        ArrayList<String> categories = new ArrayList<>();
+//        ArrayList<String> categories = new ArrayList<>();
+        HashMap<String, ArrayList<Gradable>> categories = new HashMap<>();
         for (Gradable gradable : course.getGradableList()) {
             String currentCategory = gradable.getType();
-            if(!categories.contains(currentCategory)){
-                categories.add(currentCategory);
+            if(!categories.containsKey(currentCategory)){
+                ArrayList<Gradable> grads = new ArrayList<>();
+                grads.add(gradable);
+                categories.put(currentCategory, grads);
+            }
+            else{
+                ArrayList<Gradable> grads = categories.get(currentCategory);
+                grads.add(gradable);
+                categories.put(currentCategory, grads);
             }
         }
+
+        for (String category : categories.keySet()) {
+            TableColumn gC = addNewGradingCategoryToTable(category);
+            for(Gradable gradable:categories.get(category)){
+                addNewGradable(gradable.getAssignmentName(), gC);
+            }
+        }
+
 
         for (Student student : course.getStudentList()) {
             Person newPerson = new Person(
@@ -384,5 +303,101 @@ public class MainUI extends Application {
                     student.getStudentID());
             data.add(newPerson);
         }
+    }
+
+    public TableColumn addNewGradingCategoryToTable( String gradingCategory){
+
+
+        TableColumn gC = new TableColumn(gradingCategory);
+        gC.setMinWidth(100);
+        gC.setCellValueFactory(new PropertyValueFactory<Person, String>(gradingCategory));
+        gC.setCellFactory(cellFactory);
+
+        Button addAssignment = new Button("+");
+        addAssignment.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+
+                Dialog dialog = new Dialog();
+                dialog.setTitle("Add a Gradeable");
+                dialog.setHeaderText("Add a new assignment to: " + gC.getText());
+
+                ButtonType addAssignment = new ButtonType("Add Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(addAssignment, ButtonType.CANCEL);
+
+                GridPane grid = new GridPane();
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.setPadding(new Insets(20, 150, 10, 10));
+
+                final TextField addAssignmentName = new TextField();
+                addAssignmentName.setPromptText("i.e HW2");
+
+                final TextField addMaxScore = new TextField();
+                addMaxScore.setPromptText("i.e 100");
+
+                final TextField addUgradWeight = new TextField();
+                addUgradWeight.setPromptText("i.e 35");
+
+                final TextField addGradWeight = new TextField();
+                addGradWeight.setPromptText("i.e 15");
+
+                final Text percent = new Text();
+                percent.setText("%");
+
+                final Text percent2 = new Text();
+                percent2.setText("%");
+
+
+                grid.add(new Label("Add Assignment Name"), 0, 0);
+                grid.add(addAssignmentName, 1, 0);
+                grid.add(new Label("How many points in this assignment out of?"), 0, 1);
+                grid.add(addMaxScore, 1, 1);
+                grid.add(new Label("Undergraduate Weight"), 0, 2);
+                grid.add(addUgradWeight, 1, 2);
+                grid.add(percent2, 2, 2);
+                grid.add(new Label("Graduate Weight"), 0, 3);
+                grid.add(addGradWeight, 1, 3);
+                grid.add(percent, 2, 3);
+
+
+                dialog.getDialogPane().setContent(grid);
+
+                Optional<String> result = dialog.showAndWait();
+
+                if (result.isPresent()){
+                    if (addAssignmentName.getText().length() == 0){
+                        System.out.println("Assignment Name cannot be empty");
+                    }
+                    else if (addMaxScore.getText().length() == 0){
+                        System.out.println("Maximum Score cannot be empty");
+                    }
+                    else if (addUgradWeight.getText().length() == 0 && addGradWeight.getText().length() == 0){
+                        System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
+                    } else {
+                        BigDecimal maxScore = BigDecimal.valueOf(Integer.parseInt(addMaxScore.getText())).movePointLeft(2);
+                        BigDecimal ugradWeight = BigDecimal.valueOf(Integer.parseInt(addUgradWeight.getText())).movePointLeft(2);
+                        BigDecimal gradWeight = BigDecimal.valueOf(Integer.parseInt(addGradWeight.getText())).movePointLeft(2);
+
+                        String assignmentName = addAssignmentName.getText();
+                        course.addGradable(assignmentName, maxScore , ugradWeight, gradWeight, 0, gC.getText());
+
+                        addNewGradable(assignmentName, gC);
+                    }
+                }
+
+
+
+            }
+        });
+        gC.setGraphic(addAssignment);
+        table.getColumns().addAll(gC);
+
+        return gC;
+
+    }
+
+    public void addNewGradable(String assignmentName, TableColumn gC){
+        TableColumn section = new TableColumn(assignmentName);
+        gC.getColumns().addAll(section);
     }
 }
