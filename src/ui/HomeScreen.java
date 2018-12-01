@@ -1,30 +1,20 @@
 package ui;
 
-import core.Course;
 import core.Home;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.scene.control.TableView.TableViewSelectionModel;
-import ui.CourseList;
-
-import javax.print.DocFlavor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
 
 public class HomeScreen extends Application {
 
