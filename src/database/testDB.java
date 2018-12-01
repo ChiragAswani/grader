@@ -41,8 +41,8 @@ public class testDB {
 //                courseDB.insertCourse(c);
 
             HomeDAO homeDb=new HomeDB();
-            System.out.println(homeDb.checkPasswordExist());
-
+            homeDb.checkDB("oop_gradingsys");
+            homeDb.changePassword("oldpassword");
             //System.out.println(c.getGradableList().get(2).getAssignmentName());
         }catch (Exception e){
             e.printStackTrace();
