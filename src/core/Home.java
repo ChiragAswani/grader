@@ -53,13 +53,43 @@ public class Home {
         return null;
     }
 
-    public Course loadCourse(int courseId){
+    public Course loadCourse(String courseId){
         CourseDAO cdb = new CourseDB();
         try{
-           Course course = cdb.findOneCourse(courseId);
+           Course course = cdb.findOneCourse(Integer.parseInt(courseId);
            return course;
 
         }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Course createNewCourse(String courseName){
+        Course newCourse = new Course();
+        newCourse.setCourseName(courseName);
+        CourseDAO cdb = new CourseDB();
+        try{
+            Course builtCourse = cdb.insertCourse(newCourse);
+            return builtCourse;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Course cloneCourse(String courseName, String oldCourseId){
+        Course newCourse = new Course();
+        Course oldCourse = loadCourse(oldCourseId);
+        newCourse.setCourseName(courseName);
+        CourseDAO cdb = new CourseDB();
+        try{
+            Course builtCourse = cdb.insertCourse(newCourse);
+            builtCourse.setGradableList(oldCourse.getGradableList());
+            return builtCourse;
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
         return null;
