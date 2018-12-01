@@ -16,8 +16,8 @@ public class Home {
         // if username and password match return true else false
         HomeDAO auth = new HomeDB();
         try{
-            if(auth.hasLogin()){
-                return auth.checkUserInDB(pass, pass);
+            if(auth.checkPasswordExist()){
+                return auth.checkUserInDB(pass);
             }
             else changeLogin(pass);
         }
@@ -31,7 +31,7 @@ public class Home {
     public void changeLogin(String pass){
         HomeDAO auth = new HomeDB();
         try{
-            auth.checkUserInDB(pass, pass);
+            auth.checkUserInDB(pass);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class Home {
     public Course loadCourse(int courseId){
         CourseDAO cdb = new CourseDB();
         try{
-           Course course = cdb.findOneCourse(Integer.toString(courseId));
+           Course course = cdb.findOneCourse(courseId);
            return course;
 
         }catch (Exception e){
