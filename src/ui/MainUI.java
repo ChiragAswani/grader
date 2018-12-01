@@ -274,7 +274,6 @@ public class MainUI extends Application {
 
                             final Text percent = new Text();
                             percent.setText("%");
-
                             final Text percent2 = new Text();
                             percent2.setText("%");
 
@@ -311,26 +310,16 @@ public class MainUI extends Application {
 
                                     course.addGradable(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, 0, gC.getText());
 
-//                                    TableColumn section = new TableColumn(addAssignmentName.getText());
-//                                    firstNameCol.setMinWidth(100);
-//                                    firstNameCol.setCellValueFactory(
-//                                            new PropertyValueFactory<Person, String>("firstName"));
-//                                    firstNameCol.setCellFactory(cellFactory);
-//                                    firstNameCol.setOnEditCommit(
-//                                            new EventHandler<CellEditEvent<Person, String>>() {
-//                                                @Override
-//                                                public void handle(CellEditEvent<Person, String> t) {
-//                                                    ((Person) t.getTableView().getItems().get(
-//                                                            t.getTablePosition().getRow())
-//                                                    ).setFirstName(t.getNewValue());
-//                                                }
-//                                            }
-//                                    );
-
-
                                     TableColumn section = new TableColumn(addAssignmentName.getText());
-                                    Button deleteAssignmentSection = new Button("-");
-                                    section.setGraphic(deleteAssignmentSection);
+                                    section.setMinWidth(100);
+                                    section.setCellFactory(cellFactory);
+                                    section.setOnEditCommit(
+                                            new EventHandler<CellEditEvent<Person, String>>() {
+                                                @Override
+                                                public void handle(CellEditEvent<Person, String> t) {
+                                                }
+                                            }
+                                    );
                                     gC.getColumns().addAll(section);
                                 }
                             }
