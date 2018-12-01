@@ -48,8 +48,9 @@ public class GradableDB extends DBconn implements GradableDAO {
         stmt.setInt(1,courseID);
         stmt.setInt(2,gradableid);
         ResultSet rs=    stmt.executeQuery();
-        Gradable gradable = new Gradable();
+        Gradable gradableOut = null;
         if (rs.next()){
+            Gradable gradable=new Gradable();
             gradable.setgID( rs.getInt("gradableid"));
             gradable.setAssignmentName(rs.getString("gname"));
             gradable.setCustomized(rs.getInt("customized"));
@@ -58,9 +59,10 @@ public class GradableDB extends DBconn implements GradableDAO {
             gradable.setWeight_ungrad(rs.getBigDecimal("weighting_undergraduate"));
             gradable.setgID(rs.getInt("courseid"));
             gradable.setType(rs.getString("type"));
+            gradableOut=gradable;
         }
         DBconn.closeAll(conn, stmt, rs);
-        return gradable;
+        return gradableOut;
     }
 
     @Override
@@ -77,6 +79,7 @@ public class GradableDB extends DBconn implements GradableDAO {
         stmt.setBigDecimal(4,g.getWeight_grad());
         stmt.setInt(5,g.getCustomized());
         stmt.executeUpdate();
+        DBconn.closeAll(conn,stmt);
         return g;
     }
 
