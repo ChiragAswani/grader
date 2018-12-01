@@ -22,7 +22,7 @@ public class Gradable {
         this.maxScore = maxScore;
         this.weight_ungrad=weightU;
         this.weight_grad=weightG;
-        this.customized=c;
+        this.customized=c;  //1 or 0
         this.type=t;
         //this.receivedScore = receivedScore;
     }

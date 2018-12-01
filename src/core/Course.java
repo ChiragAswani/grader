@@ -1,6 +1,10 @@
 package core;
+import DAO.GradableDAO;
+import DAO.GradeDAO;
 import DAO.StudentDAO;
 import Student.Student;
+import database.GradableDB;
+import database.GradeDB;
 import database.StudentDB;
 import grades.Gradable;
 import grades.Grade;
@@ -61,8 +65,8 @@ public class Course {
     }
 
     // Add student to class from on click event in the UI
-    public void addStudent(String studentID,String firstName,String lastName, int customWeights){
-        Student newStudent = new Student(courseID, studentID, firstName, lastName, customWeights);
+    public void addStudent(String studentID,String firstName,String lastName, int customWeights, String type){
+        Student newStudent = new Student(courseID, studentID, firstName, lastName, customWeights, type);
         studentList.add(newStudent);
         StudentDAO sdb=new StudentDB();
         try{
@@ -74,27 +78,73 @@ public class Course {
     }
 
     public void editStudent(String studentID, String firstName, String lastName, int customWeights){
-        int numStudents = studentList.size();
-        for(int i=0; i<numStudents; i++) {
-            if (studentList.get(i).getStudentID().equals(studentID)) {
-                Student currentStudent = studentList.get(i);
-                currentStudent.setFirstName(firstName);
-                currentStudent.setLastName(lastName);
-                currentStudent.setCustomized(customWeights);
-                studentList.set(i, currentStudent);
-                StudentDAO sdb=new StudentDB();
-                try{
-                    sdb.updateStudent(currentStudent);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
+        int studentIndex = findStudentIndex(studentID);
+        Student currentStudent = studentList.get(studentIndex);
+        currentStudent.setFirstName(firstName);
+        currentStudent.setLastName(lastName);
+        currentStudent.setCustomized(customWeights);
+        StudentDAO sdb=new StudentDB();
+        try{
+            sdb.updateStudent(currentStudent);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
-    public void addGradingCategory(int gradableId, String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int c, String t){
-        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
-//        addGradableToOneCourse
+    public int addGradable(String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int customized, String gradableCategory){
+//        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
+        Gradable newGradable = new Gradable();
+        newGradable.setAssignmentName(assignmentName);
+        newGradable.setMaxScore(maxScore);
+        newGradable.setWeight_grad(weightG);
+        newGradable.setWeight_ungrad(weightU);
+        newGradable.setType(gradableCategory);
+        newGradable.setCustomized(customized);
+        GradableDAO gdb = new GradableDB();
+        try{
+            Gradable builtGradable = gdb.addGradableToOneCourse(newGradable);
+            gradableList.add(builtGradable);
+            return  builtGradable.getgID();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
+    public void removeGradable(int gradableID){
+        GradableDAO gdb = new GradableDB();
+        try{
+           Gradable gradable = gdb.findOneGradableInCourse(courseID, gradableID);
+           gdb.deleteGradable(gradable);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void editGrade(String studentID, String assignmentName, BigDecimal newScore){
+        int studentIndex = findStudentIndex(studentID);
+        int assignmentIndex = findAssignmentIndex(assignmentName);
+        studentList.get(studentIndex).editGrade(assignmentIndex,newScore);
+    }
+
+    public int findStudentIndex(String studentID) {
+        for (int i = 0; i < studentList.size(); i++) {
+            Student student = studentList.get(i);
+            if (student.getStudentID().equals(studentID)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int findAssignmentIndex(String assignmentName) {
+        for (int i = 0; i < gradableList.size(); i++) {
+            Gradable gradable = gradableList.get(i);
+            if (gradable.getAssignmentName().equals(assignmentName)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

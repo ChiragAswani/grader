@@ -1,5 +1,9 @@
 package Student;
 
+import DAO.GradableDAO;
+import DAO.GradeDAO;
+import database.GradableDB;
+import database.GradeDB;
 import grades.Grade;
 
 import java.math.BigDecimal;
@@ -26,13 +30,14 @@ public class Student {
         customized=c;
         gradeList=g;
     }
-    public Student(int cID,String ID,String FN,String LN, int c){
+    public Student(int cID,String ID,String FN,String LN, int c, String type){
         courseID=cID;
         studentID=ID;
         firstName=FN;
         lastName=LN;
         customized=c;
         gradeList= new ArrayList<>();
+        this.type=type;
     }
 
     public int getCourseID() {
@@ -89,5 +94,16 @@ public class Student {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void editGrade(int index, BigDecimal newScore){
+        gradeList.get(index).setScore(newScore);
+        GradeDAO gdb = new GradeDB();
+        try{
+            gdb.updateGrade(gradeList.get(index));
+        }
+        catch (Exception e){
+
+        }
     }
 }
