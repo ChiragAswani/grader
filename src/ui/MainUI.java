@@ -21,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
@@ -157,33 +158,16 @@ public class MainUI extends Application {
         table.setItems(data);
         table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol);
 
-        final TextField addFirstName = new TextField();
-        addFirstName.setPromptText("First Name");
-        addFirstName.setMaxWidth(firstNameCol.getPrefWidth());
-        final TextField addLastName = new TextField();
-        addLastName.setMaxWidth(lastNameCol.getPrefWidth());
-        addLastName.setPromptText("Last Name");
-
-        final TextField addBUID = new TextField();
-        addBUID.setMaxWidth(BUIDCol.getPrefWidth());
-        addBUID.setPromptText("BUID");
-
-
-        final TextField addGradingCategory = new TextField();
-        addGradingCategory.setPromptText("Add Grading Category");
-
-
         final Button addStudent = new Button("Add A New Student");
         addStudent.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                // Create the custom dialog.
-                Dialog<Pair<String, String>> dialog = new Dialog<>();
-                dialog.setTitle("Login Dialog");
+                Dialog dialog = new Dialog();
+                dialog.setTitle("Add a New Student");
                 dialog.setHeaderText("Add a student to " + course.getCourseName());
 
-                ButtonType loginButtonType = new ButtonType("Add Student", ButtonBar.ButtonData.APPLY.OK_DONE);
-                dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+                ButtonType addStudentButton = new ButtonType("Add Student", ButtonBar.ButtonData.APPLY.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(addStudentButton, ButtonType.CANCEL);
 
                 GridPane grid = new GridPane();
                 grid.setHgap(10);
@@ -216,17 +200,9 @@ public class MainUI extends Application {
 
                 dialog.getDialogPane().setContent(grid);
 
-                Platform.runLater(() -> addFirstName.requestFocus());
+                Optional result = dialog.showAndWait();
 
-                dialog.setResultConverter(dialogButton -> {
-                    if (dialogButton == loginButtonType) {
-                        return new Pair<>(addFirstName.getText(), addLastName.getText());
-                    }
-                    return null;
-                });
-                Optional<Pair<String, String>> result = dialog.showAndWait();
-
-                result.ifPresent(usernamePassword -> {
+                if (result.isPresent()){
                     if (addFirstName.getText().length() == 0){
                         System.out.println("First Name cannot be empty");
                     }
@@ -236,7 +212,7 @@ public class MainUI extends Application {
                     else if (addBUID.getText().length() == 0){
                         System.out.println("BUID cannot be empty");
                     } else {
-                        course.addStudent(addFirstName.getText(), addLastName.getText(), addBUID.getText(), comboBox.getSelectionModel().getSelectedIndex());
+                        course.addStudent(addFirstName.getText(), addLastName.getText(), addBUID.getText(), 0, comboBox.getSelectionModel().getSelectedItem().toString());
                         Person newPerson = new Person(
                                 addFirstName.getText(),
                                 addLastName.getText(),
@@ -246,10 +222,12 @@ public class MainUI extends Application {
                         addLastName.clear();
                         addBUID.clear();
                     }
-                });
-
+                }
             }
         });
+
+        final TextField addGradingCategory = new TextField();
+        addGradingCategory.setPromptText("Add Grading Category");
 
         final Button addGradingCategoryButton = new Button("Add Grading Category");
         addGradingCategoryButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -268,27 +246,78 @@ public class MainUI extends Application {
                     Button addAssignment = new Button("+");
                     addAssignment.setOnAction(new EventHandler<ActionEvent>() {
                         @Override public void handle(ActionEvent e) {
-                            TextInputDialog dialog = new TextInputDialog();
-                            dialog.setTitle("Assignment Input");
-                            dialog.setHeaderText("Enter Assignment (i.e. HW2)");
-                            dialog.setContentText("Assignment:");
-                            Optional<String> result = dialog.showAndWait();
-                            if (result.isPresent()){
-                                TableColumn section = new TableColumn(result.get());
-                                section.setMinWidth(100);
-                                section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
-                                section.setCellFactory(cellFactory);
 
-                                Button deleteAssignmentSection = new Button("-");
-                                deleteAssignmentSection.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override public void handle(ActionEvent e) {
-                                        System.out.println(result.get());
-                                        section.getColumns().clear();
-                                    }
-                                });
-                                section.setGraphic(deleteAssignmentSection);
-                                gC.getColumns().addAll(section);
+                            Dialog dialog = new Dialog();
+                            dialog.setTitle("Add a Gradeable");
+                            dialog.setHeaderText("Add a new assignment to: " + gC.getText());
+
+                            ButtonType addAssignment = new ButtonType("Add Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
+                            dialog.getDialogPane().getButtonTypes().addAll(addAssignment, ButtonType.CANCEL);
+
+                            GridPane grid = new GridPane();
+                            grid.setHgap(10);
+                            grid.setVgap(10);
+                            grid.setPadding(new Insets(20, 150, 10, 10));
+
+                            final TextField addAssignmentName = new TextField();
+                            addAssignmentName.setPromptText("i.e HW2");
+
+                            final TextField addMaxScore = new TextField();
+                            addMaxScore.setPromptText("i.e 100");
+
+                            final TextField addUgradWeight = new TextField();
+                            addUgradWeight.setPromptText("i.e 35");
+
+                            final TextField addGradWeight = new TextField();
+                            addGradWeight.setPromptText("i.e 15");
+
+                            final Text percent = new Text();
+                            percent.setText("%");
+
+
+                            grid.add(new Label("Add Assignment Name"), 0, 0);
+                            grid.add(addAssignmentName, 1, 0);
+                            grid.add(new Label("How many points in this assignment out of?"), 0, 1);
+                            grid.add(addMaxScore, 1, 1);
+                            grid.add(new Label("Undergraduate Weight"), 0, 2);
+                            grid.add(addUgradWeight, 1, 2);
+                            grid.add(new Label("Graduate Weight"), 0, 3);
+                            grid.add(addGradWeight, 1, 3);
+                            grid.add(percent, 2, 3);
+
+
+                            dialog.getDialogPane().setContent(grid);
+
+                            Optional<String> result = dialog.showAndWait();
+
+                            if (result.isPresent()){
+                                if (addAssignmentName.getText().length() == 0){
+                                    System.out.println("Assignment Name cannot be empty");
+                                }
+                                else if (addMaxScore.getText().length() == 0){
+                                    System.out.println("Maximum Score cannot be empty");
+                                }
+                                else if (addUgradWeight.getText().length() == 0 && addGradWeight.getText().length() == 0){
+                                    System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
+                                } else {
+                                    TableColumn section = new TableColumn(result.get());
+                                    section.setMinWidth(100);
+                                    section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
+                                    section.setCellFactory(cellFactory);
+
+                                    Button deleteAssignmentSection = new Button("-");
+                                    deleteAssignmentSection.setOnAction(new EventHandler<ActionEvent>() {
+                                        @Override public void handle(ActionEvent e) {
+                                            section.getColumns().clear();
+                                        }
+                                    });
+                                    section.setGraphic(deleteAssignmentSection);
+                                    gC.getColumns().addAll(section);
+                                }
                             }
+
+
+
                         }
                     });
                     gC.setGraphic(addAssignment);
