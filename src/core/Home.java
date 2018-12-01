@@ -16,13 +16,17 @@ public class Home {
         // if username and password match return true else false
         HomeDAO auth = new HomeDB();
         try{
-            return auth.checkUserInDB(pass, pass);
+            if(auth.hasLogin()){
+                return auth.checkUserInDB(pass, pass);
+            }
+            else changeLogin(pass);
         }
         catch (Exception e){
             e.printStackTrace();
         }
         return false;
     }
+
 
     public void changeLogin(String pass){
         HomeDAO auth = new HomeDB();
@@ -33,14 +37,14 @@ public class Home {
             e.printStackTrace();
         }
     }
-    public List<Integer> seeCourses(){
-        //
+    public List<String[]> seeCourses(){
+        //Return list of tuples of courseID and courseName for all of users courses
         CourseDAO cdb = new CourseDB();
         try{
             List<Course> courses = cdb.findAllCourse();
-            List<Integer> courseIds = courses
+            List<String[]> courseIds = courses
                     .stream()
-                    .map(course ->  Integer.valueOf(course.getCourseID()))
+                    .map(course ->  new String[] {Integer.toString(course.getCourseID()), course.getCourseName()})
                     .collect(Collectors.toList());
             return courseIds;
         }catch (Exception e){
@@ -48,6 +52,7 @@ public class Home {
         }
         return null;
     }
+
     public Course loadCourse(int courseId){
         CourseDAO cdb = new CourseDB();
         try{
