@@ -305,7 +305,7 @@ public class MainUI extends Application {
                                     System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
                                 } else {
                                     System.out.println(addAssignmentName.getText() + addMaxScore.getText() + addUgradWeight.getText() + addGradWeight.getText());
-
+//                                    course.addGradable(addAssignmentName.getText(), addMaxScore.getText(), addUgradWeight.getText(), addGradWeight.getText());
                                     TableColumn section = new TableColumn(result.get());
                                     section.setMinWidth(100);
                                     section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
