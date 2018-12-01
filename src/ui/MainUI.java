@@ -307,22 +307,31 @@ public class MainUI extends Application {
                                 else if (addUgradWeight.getText().length() == 0 && addGradWeight.getText().length() == 0){
                                     System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
                                 } else {
-                                    System.out.println(addAssignmentName.getText() + addMaxScore.getText() + addUgradWeight.getText() + addGradWeight.getText());
                                     BigDecimal maxScore = BigDecimal.valueOf(Integer.parseInt(addMaxScore.getText())).movePointLeft(2);
                                     BigDecimal ugradWeight = BigDecimal.valueOf(Integer.parseInt(addUgradWeight.getText())).movePointLeft(2);
                                     BigDecimal gradWeight = BigDecimal.valueOf(Integer.parseInt(addGradWeight.getText())).movePointLeft(2);
-                                    course.addGradable(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, 0, gC.getText());
-                                    TableColumn section = new TableColumn(result.get());
-                                    section.setMinWidth(100);
-                                    section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
-                                    section.setCellFactory(cellFactory);
 
+                                    course.addGradable(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, 0, gC.getText());
+
+//                                    TableColumn section = new TableColumn(addAssignmentName.getText());
+//                                    firstNameCol.setMinWidth(100);
+//                                    firstNameCol.setCellValueFactory(
+//                                            new PropertyValueFactory<Person, String>("firstName"));
+//                                    firstNameCol.setCellFactory(cellFactory);
+//                                    firstNameCol.setOnEditCommit(
+//                                            new EventHandler<CellEditEvent<Person, String>>() {
+//                                                @Override
+//                                                public void handle(CellEditEvent<Person, String> t) {
+//                                                    ((Person) t.getTableView().getItems().get(
+//                                                            t.getTablePosition().getRow())
+//                                                    ).setFirstName(t.getNewValue());
+//                                                }
+//                                            }
+//                                    );
+
+
+                                    TableColumn section = new TableColumn(addAssignmentName.getText());
                                     Button deleteAssignmentSection = new Button("-");
-                                    deleteAssignmentSection.setOnAction(new EventHandler<ActionEvent>() {
-                                        @Override public void handle(ActionEvent e) {
-                                            section.getColumns().clear();
-                                        }
-                                    });
                                     section.setGraphic(deleteAssignmentSection);
                                     gC.getColumns().addAll(section);
                                 }
