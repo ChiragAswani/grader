@@ -49,15 +49,36 @@ public class CourseList extends Application {
 
         Home h = new Home();
         List<String[]> courses = h.seeCourses();
-        
+
         for (int i = 0; i < courses.size(); i++){
             String courseID = courses.get(i)[0];
             String course = courses.get(i)[1];
             Button courseButton = new Button(course);
+            courseButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent e) {
+                    stage.close();
+                    MainUI ui = new MainUI(h.loadCourse(courseID));
+                    Stage a = new Stage();
+                    ui.start(a);
+                }
+            });
             hb.getChildren().addAll(courseButton);
         }
+
+        final TextField newCourse = new TextField();
+        newCourse.setPromptText("Course Name");
         Button addCourseButton = new Button("Create New Course");
-        vbox.getChildren().addAll(addCourseButton);
+        addCourseButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                stage.close();
+                MainUI ui = new MainUI(h.createNewCourse(newCourse.getText()));
+                Stage a = new Stage();
+                ui.start(a);
+            }
+        });
+
+
+        vbox.getChildren().addAll(newCourse, addCourseButton);
 
         //hb.getChildren().addAll(password, login);
         hb.setSpacing(3);
