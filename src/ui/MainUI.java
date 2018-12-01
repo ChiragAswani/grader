@@ -69,13 +69,14 @@ public class MainUI extends Application {
 
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
-        stage.setWidth(450);
-        stage.setHeight(550);
+        stage.setWidth(1000);
+        stage.setHeight(1000);
 
         final Label label = new Label("Students");
         label.setFont(new Font("Arial", 20));
 
         table.setEditable(true);
+        table.setPrefWidth(800);
         Callback<TableColumn, TableCell> cellFactory =
                 new Callback<TableColumn, TableCell>() {
                     public TableCell call(TableColumn p) {
@@ -200,10 +201,10 @@ public class MainUI extends Application {
                     gC.setMinWidth(100);
                     gC.setCellValueFactory(new PropertyValueFactory<Person, String>(gradingCategory));
                     gC.setCellFactory(cellFactory);
+
                     Button addAssignment = new Button("+");
                     addAssignment.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override public void handle(ActionEvent e)
-                        {
+                        @Override public void handle(ActionEvent e) {
                             TextInputDialog dialog = new TextInputDialog();
                             dialog.setTitle("Assignment Input");
                             dialog.setHeaderText("Enter Assignment (i.e. HW2)");
@@ -211,7 +212,17 @@ public class MainUI extends Application {
                             Optional<String> result = dialog.showAndWait();
                             if (result.isPresent()){
                                 TableColumn section = new TableColumn(result.get());
+                                section.setMinWidth(100);
+                                section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
+                                section.setCellFactory(cellFactory);
+
                                 Button deleteAssignmentSection = new Button("-");
+                                deleteAssignmentSection.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override public void handle(ActionEvent e) {
+                                        System.out.println(result.get());
+                                        section.getColumns().clear();
+                                    }
+                                });
                                 section.setGraphic(deleteAssignmentSection);
                                 gC.getColumns().addAll(section);
                             }

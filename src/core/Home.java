@@ -56,7 +56,7 @@ public class Home {
     public Course loadCourse(String courseId){
         CourseDAO cdb = new CourseDB();
         try{
-           Course course = cdb.findOneCourse(Integer.parseInt(courseId);
+           Course course = cdb.findOneCourse(Integer.parseInt(courseId));
            return course;
 
         }catch (Exception e){
