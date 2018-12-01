@@ -22,12 +22,28 @@ public class testDB {
         try{
 //            Gradable gradable=new Gradable(1,-1,"test",new BigDecimal(100),null,null,0,"hw");
 //            gadb.removeGradableFromOneCourse(gradable);
-            HomeDAO homeDB=new HomeDB();
-            if (homeDB.checkUserInDB("test","34")){
-                System.out.println("correct");
-            }else{
-                System.out.println("wrong");
-            }
+
+//
+//                CourseDAO courseDB=new CourseDB();
+//                Course c=new Course();
+//                c.setCourseName("ahahaha");
+//                List<Gradable> glist=new ArrayList<>();
+//                Gradable g=new Gradable();
+//                g.setAssignmentName("hello");
+//                glist.add(g);
+//                List<Student> studentList=new ArrayList<>();
+//                Student s=new Student();
+//                s.setStudentID("qqqqqq");
+//                s.setFirstName("firstname ahahaha");
+//                studentList.add(s);
+//                c.setGradableList(glist);
+//                c.setStudentList(studentList);
+//                courseDB.insertCourse(c);
+
+            HomeDAO homeDb=new HomeDB();
+            System.out.println(homeDb.checkPasswordExist());
+
+            //System.out.println(c.getGradableList().get(2).getAssignmentName());
         }catch (Exception e){
             e.printStackTrace();
         }

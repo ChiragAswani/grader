@@ -72,8 +72,10 @@ public class StudentDB extends DBconn implements StudentDAO {
         ResultSet rs=  stmt.executeQuery();
         if (rs.next()){
             System.out.println("no student before");
+            DBconn.closeAll(conn,stmt);
             return true;
         }
+        DBconn.closeAll(conn,stmt);
         return false;
     }
 
