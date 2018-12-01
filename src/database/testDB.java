@@ -40,9 +40,14 @@ public class testDB {
 //                c.setStudentList(studentList);
 //                courseDB.insertCourse(c);
 
-            HomeDAO homeDb=new HomeDB();
-            homeDb.checkDB("oop_gradingsys");
-            homeDb.changePassword("oldpassword");
+//            HomeDAO homeDb=new HomeDB();
+//            homeDb.checkDB("oop_gradingsys");
+//            homeDb.changePassword("oldpassword");
+            GradableDAO gDB=new GradableDB();
+            Gradable g=new Gradable();
+            g.setCourseID(1);
+            g.setAssignmentName("tttttzzzz");
+            gDB.addGradableToOneCourse(g);
             //System.out.println(c.getGradableList().get(2).getAssignmentName());
         }catch (Exception e){
             e.printStackTrace();
@@ -61,9 +66,6 @@ public class testDB {
 //        {
 //            e.printStackTrace();
 //        }
-
-
-
 
     }
 }

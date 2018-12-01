@@ -148,7 +148,7 @@ public class StudentDB extends DBconn implements StudentDAO {
     @Override
     public void deleteStudent(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="delete from Studentwhere  studentid=?";
+        String sql="delete from Student where  studentid=?";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
         stmt.executeUpdate();
