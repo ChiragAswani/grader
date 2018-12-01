@@ -91,4 +91,10 @@ public class Course {
             }
         }
     }
+
+    public void addGradingCategory(int gradableId, String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int c, String t){
+        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
+//        addGradableToOneCourse
+
+    }
 }
