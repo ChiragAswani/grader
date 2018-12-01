@@ -20,8 +20,14 @@ public class testDB {
 
 
         try{
-            Gradable gradable=new Gradable(1,-1,"test",new BigDecimal(100),null,null,0,"hw");
-            gadb.removeGradableFromOneCourse(gradable);
+//            Gradable gradable=new Gradable(1,-1,"test",new BigDecimal(100),null,null,0,"hw");
+//            gadb.removeGradableFromOneCourse(gradable);
+            HomeDAO homeDB=new HomeDB();
+            if (homeDB.checkUserInDB("test","34")){
+                System.out.println("correct");
+            }else{
+                System.out.println("wrong");
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
