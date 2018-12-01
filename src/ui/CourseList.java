@@ -47,19 +47,17 @@ public class CourseList extends Application {
         vbox.setPadding(new Insets(10, 0, 0, 10));
         vbox.getChildren().addAll(label, hb);
 
-        List<String[]> courses = new ArrayList<String[]>();
-        courses.add(new String[] {"1", "CS591"});
-        courses.add(new String[] {"2", "CS112"});
-
-
-
+        Home h = new Home();
+        List<String[]> courses = h.seeCourses();
+        
         for (int i = 0; i < courses.size(); i++){
             String courseID = courses.get(i)[0];
             String course = courses.get(i)[1];
             Button courseButton = new Button(course);
             hb.getChildren().addAll(courseButton);
         }
-
+        Button addCourseButton = new Button("Create New Course");
+        vbox.getChildren().addAll(addCourseButton);
 
         //hb.getChildren().addAll(password, login);
         hb.setSpacing(3);
