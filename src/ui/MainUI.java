@@ -28,6 +28,7 @@ import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.util.Pair;
 
 import javax.print.DocFlavor;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -305,7 +306,10 @@ public class MainUI extends Application {
                                     System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
                                 } else {
                                     System.out.println(addAssignmentName.getText() + addMaxScore.getText() + addUgradWeight.getText() + addGradWeight.getText());
-//                                    course.addGradable(addAssignmentName.getText(), addMaxScore.getText(), addUgradWeight.getText(), addGradWeight.getText());
+                                    BigDecimal maxScore = BigDecimal.valueOf(Integer.parseInt(addMaxScore.getText())).movePointLeft(2);
+                                    BigDecimal ugradWeight = BigDecimal.valueOf(Integer.parseInt(addUgradWeight.getText())).movePointLeft(2);
+                                    BigDecimal gradWeight = BigDecimal.valueOf(Integer.parseInt(addGradWeight.getText())).movePointLeft(2);
+                                    course.addGradable(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, 0, gC.getText());
                                     TableColumn section = new TableColumn(result.get());
                                     section.setMinWidth(100);
                                     section.setCellValueFactory(new PropertyValueFactory<Person, String>(result.get()));
