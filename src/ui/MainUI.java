@@ -43,7 +43,17 @@ public class MainUI extends Application {
     Callback<TableColumn, TableCell> cellFactory =
             new Callback<TableColumn, TableCell>() {
                 public TableCell call(TableColumn p) {
-                    return new EditingCell();
+                    TableCell<Person, String> cell = new TableCell<Person, String>() {
+                        @Override
+                        protected void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty) ;
+                            setText(empty ? null : item);
+                        }
+                    };
+                    cell.setOnMouseClicked(e -> {
+                        System.out.println(cell.getTableColumn());
+                    });
+                    return cell ;
                 }
             };
 
@@ -101,19 +111,23 @@ public class MainUI extends Application {
 
         TableColumn firstNameCol = new TableColumn("First Name");
         firstNameCol.setMinWidth(100);
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
+//        firstNameCol.setCellFactory(tc -> {
+//            TableCell<Person, String> cell = new TableCell<Person, String>() {
+//                @Override
+//                protected void updateItem(String item, boolean empty) {
+//                    super.updateItem(item, empty) ;
+//                    setText(empty ? null : item);
+//                }
+//            };
+//            cell.setOnMouseClicked(e -> {
+//                System.out.print("HERE");
+//            });
+//            return cell ;
+//        });
         firstNameCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("firstName"));
         firstNameCol.setCellFactory(cellFactory);
-        firstNameCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setFirstName(t.getNewValue());
-                    }
-                }
-        );
 
 
         TableColumn lastNameCol = new TableColumn("Last Name");
@@ -404,9 +418,12 @@ public class MainUI extends Application {
                 new EventHandler<CellEditEvent<Person, String>>() {
                     @Override
                     public void handle(CellEditEvent<Person, String> t) {
+                        System.out.println(table.getEditingCell().toString());
+                        System.out.println(table.getItems().toString());
                     }
                 }
         );
         gC.getColumns().addAll(section);
+
     }
 }
