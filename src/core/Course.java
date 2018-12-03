@@ -1,15 +1,19 @@
 package core;
 
 import DAO.GradableDAO;
+import DAO.GradeDAO;
 import DAO.StudentDAO;
 import Student.Student;
 import database.GradableDB;
+import database.GradeDB;
 import database.StudentDB;
 import grades.Gradable;
+import grades.Grade;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -77,6 +81,17 @@ public class Course {
         System.out.println(Arrays.toString(studentList.toArray()));
     }
 
+    public void deleteStudent(String studentID){
+        int index = findStudentIndex(studentID);
+        StudentDAO sdb=new StudentDB();
+        try{
+
+            sdb.removeStudentFromCourse(studentList.get(index));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void editStudent(String studentID, String firstName, String lastName, int customWeights){
         int studentIndex = findStudentIndex(studentID);
         Student currentStudent = studentList.get(studentIndex);
@@ -128,6 +143,33 @@ public class Course {
         int studentIndex = findStudentIndex(studentID);
         int assignmentIndex = findAssignmentIndex(assignmentName);
         studentList.get(studentIndex).editGrade(assignmentIndex,newScore);
+    }
+
+    public HashMap<String, String> calculateFinalGrades(){
+        GradeDAO gdb = new GradeDB();
+        HashMap<String, String> finalScores = new HashMap<>();
+        for (Student student : studentList) {
+            BigDecimal totalWeight = new BigDecimal(0);
+            BigDecimal totalScore = new BigDecimal(0);
+            for (Gradable gradable : gradableList) {
+               try{
+                   Grade studentGrade = gdb.findOneGrade(student.getStudentID(), gradable.getgID());
+                   BigDecimal studentScore = studentGrade.getScore();
+                   BigDecimal weight = student.getType() == "grad" ? gradable.getWeight_grad() : gradable.getWeight_ungrad();
+                   totalWeight.add(weight);
+                   totalScore.add(studentScore.multiply(weight));
+               }
+               catch (Exception e){
+                   e.printStackTrace();
+               }
+               String studentID = student.getStudentID();
+               String finalScore = totalScore.divide(totalWeight).toString();
+               finalScores.put(studentID, finalScore);
+            }
+
+        }
+
+        return finalScores;
     }
 
     public int findStudentIndex(String studentID) {
