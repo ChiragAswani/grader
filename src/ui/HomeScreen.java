@@ -7,14 +7,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class HomeScreen extends Application {
 
@@ -29,48 +29,47 @@ public class HomeScreen extends Application {
 
         Scene scene = new Scene(new Group());
 
-        final Label label = new Label("Enter Password");
-        label.setFont(new Font("Arial", 20));
+        final TextField passwordInput = new TextField();
+        passwordInput.setPromptText("Enter Password Here");
 
-        final TextField password = new TextField();
-        password.setPromptText("Password");
+        Dialog dialog = new Dialog();
+        dialog.setTitle("Authentication");
+        dialog.setHeaderText("Welcome to GradeSafe");
 
-        Button login = new Button("Login");
-        login.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                Home h = new Home();
-                Boolean isPasswordValid = h.login(password.getText());
-                if(isPasswordValid){
-                    stage.close();
-                    CourseList courseList = new CourseList();
-                    Stage a = new Stage();
-                    courseList.start(a);
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText("Authentication Error");
-                    alert.setContentText("Invalid Password");
-                    alert.showAndWait();
-                }
+        ButtonType addGradingCategory = new ButtonType("Enter Grading Portal", ButtonBar.ButtonData.APPLY.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+
+        grid.add(new Label("Password: "), 0, 0);
+        grid.add(passwordInput, 1, 0);
+
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<String> result = dialog.showAndWait();
+
+        if (result.isPresent()){
+            Home h = new Home();
+            Boolean isPasswordValid = h.login(passwordInput.getText());
+            if(isPasswordValid){
+                stage.close();
+                CourseList courseList = new CourseList();
+                Stage a = new Stage();
+                courseList.start(a);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error Message");
+                alert.setHeaderText("Authentication Error");
+                alert.setContentText("Invalid Password");
+                alert.showAndWait();
             }
-        });
-
-
-        //hb.getChildren().addAll(password, login);
-        hb.setSpacing(3);
-
-
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, hb);
-        vbox.getChildren().addAll(password, login);
-
-        ((Group) scene.getRoot()).getChildren().addAll(vbox);
-
-        stage.setScene(scene);
-        stage.show();
-
+        } else {
+            System.exit(0);
+        }
 
     }
 }

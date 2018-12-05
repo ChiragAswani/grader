@@ -95,10 +95,12 @@ public class MainUI extends Application {
                         dialog.getDialogPane().setContent(grid);
 
                         Optional<String> result = dialog.showAndWait();
+                        if (result.isPresent()){
+                            Integer computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
+                            cell.setText(computedValue.toString() + "/" + tP);
+                            e.consume();
+                        }
 
-                        Integer computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
-                        cell.commitEdit(computedValue.toString() + "/" + tP);
-                        e.consume();
                     });
                     return cell ;
                 }
@@ -303,7 +305,19 @@ public class MainUI extends Application {
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, addGradingCategoryButton, table, hb);
+
+        Button goBackButton = new Button("Go Back To Course Selection");
+        goBackButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                stage.close();
+                CourseList courseList = new CourseList();
+                Stage a = new Stage();
+                courseList.start(a);
+            }
+        });
+
+
+        vbox.getChildren().addAll(label, addGradingCategoryButton, table, hb, goBackButton);
 
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
 
