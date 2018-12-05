@@ -23,7 +23,10 @@ public class Home {
             if(auth.checkPasswordExist()){
                 return auth.checkUserInDB(pass);
             }
-            else changeLogin(pass);
+            else {
+                changeLogin(pass);
+                return true;
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -35,7 +38,7 @@ public class Home {
     public void changeLogin(String pass){
         HomeDAO auth = new HomeDB();
         try{
-            auth.checkUserInDB(pass);
+            auth.changePassword(pass);
         }
         catch (Exception e){
             e.printStackTrace();

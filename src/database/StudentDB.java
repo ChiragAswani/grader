@@ -86,10 +86,11 @@ public class StudentDB extends DBconn implements StudentDAO {
             System.out.println("insert student");
             insertStudent(s);
         }
-        String sql="INSERT INTO register(studentid,courseid) values(?,?)";
+        String sql="INSERT INTO register(studentid,courseid,customized) values(?,?,?)";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
         stmt.setInt(2,s.getCourseID());
+        stmt.setInt(3,s.getCustomized());
         stmt.executeUpdate();
         List<Grade> glist=s.getGradeList();
         if (glist!=null){
@@ -122,26 +123,24 @@ public class StudentDB extends DBconn implements StudentDAO {
     @Override
     public void insertStudent(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="INSERT INTO student(studentid,first_name,last_name,type,customized) VALUES(?,?,?,?,?)";
+        String sql="INSERT INTO student(studentid,first_name,last_name,type) VALUES(?,?,?,?)";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setString(1,s.getStudentID());
         stmt.setString(2,s.getFirstName());
         stmt.setString(3,s.getLastName());
         stmt.setString(4,s.getType());
-        stmt.setInt(5,s.getCustomized());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
     }
     @Override
     public void updateStudent(Student s) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="update Student set last_name=?, first_name=? , type=?, customized=? where  studentid=?";
+        String sql="update Student set last_name=?, first_name=? , type=? where  studentid=?";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,s.getLastName());
         stmt.setString(2,s.getFirstName());
         stmt.setString(3,s.getType());
-        stmt.setInt(4,s.getCustomized());
-        stmt.setString(5,s.getStudentID());
+        stmt.setString(4,s.getStudentID());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
     }

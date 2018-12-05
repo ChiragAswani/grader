@@ -3,6 +3,7 @@ package database;
 import DAO.*;
 import Student.Student;
 import core.Course;
+import grades.Category;
 import grades.Gradable;
 import grades.Grade;
 import grades.Tag;
@@ -15,7 +16,7 @@ public class testDB {
     public static void main(String[] args) {
         StudentDAO sdb=new StudentDB();
         GradeDAO gdb=new GradeDB();
-        CourseDAO cdb=new CourseDB();
+        //CourseDAO cdb=new CourseDB();
         GradableDAO gadb=new GradableDB();
 
 
@@ -43,11 +44,20 @@ public class testDB {
 //            HomeDAO homeDb=new HomeDB();
 //            homeDb.checkDB("oop_gradingsys");
 //            homeDb.changePassword("oldpassword");
-            GradableDAO gDB=new GradableDB();
-            Gradable g=new Gradable();
-            g.setCourseID(1);
-            g.setAssignmentName("tttttzzzz");
-            gDB.addGradableToOneCourse(g);
+            CourseDAO cdb=new CourseDB();
+            Course course=cdb.findOneCourse(1);
+            System.out.println(course.getCategoryList().get(0).getCategoryName());
+            Category category=new Category();
+            category.setCourseid(1);
+            category.setCategoryName("testCategory");
+            CategoryDB gcDB=new CategoryDB();
+            category.setWeight_grad(new BigDecimal(0));
+            //gcDB.deleteCategory(category);
+//            GradableDAO gDB=new GradableDB();
+//            Gradable g=new Gradable();
+//            g.setCourseID(1);
+//            g.setAssignmentName("tttttzzzz");
+//            gDB.addGradableToOneCourse(g);
             //System.out.println(c.getGradableList().get(2).getAssignmentName());
         }catch (Exception e){
             e.printStackTrace();

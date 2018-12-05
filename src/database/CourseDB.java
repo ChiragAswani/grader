@@ -5,8 +5,8 @@ import DAO.GradableDAO;
 import DAO.StudentDAO;
 import Student.Student;
 import core.Course;
+import grades.Category;
 import grades.Gradable;
-import grades.Grade;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,13 +26,16 @@ public class CourseDB extends DBconn implements CourseDAO {
         while(rs.next()) {
             StudentDB sDB=new StudentDB();
             GradableDB gDB=new GradableDB();
+            CategoryDB cDB=new CategoryDB();
+            List<Category> cList=cDB.findAllCategoryInOneCourse(rs.getInt("courseid"));
             List<Gradable> glist=gDB.findAllGradableInCourse(rs.getInt("courseid"));
             List<Student> sList=sDB.findAllStudentInCourse(rs.getInt("courseid"));
             Course c=new Course(
                     rs.getInt("courseid"),
                     rs.getString("cname"),
                     sList,
-                    glist
+                    glist,
+                    cList
             );
             CourseList.add(c);
         }
@@ -51,13 +54,16 @@ public class CourseDB extends DBconn implements CourseDAO {
         if(rs.next()) {
             StudentDB sDB=new StudentDB();
             GradableDB gDB=new GradableDB();
+            CategoryDB cDB=new CategoryDB();
+            List<Category> cList=cDB.findAllCategoryInOneCourse(rs.getInt("courseid"));
             List<Gradable> glist=gDB.findAllGradableInCourse(rs.getInt("courseid"));
             List<Student> sList=sDB.findAllStudentInCourse(rs.getInt("courseid"));
             Course c=new Course(
                     rs.getInt("courseid"),
                     rs.getString("cname"),
                     sList,
-                    glist
+                    glist,
+                    cList
             );
             course=c;
         }
@@ -94,6 +100,13 @@ public class CourseDB extends DBconn implements CourseDAO {
                 g.setgID(gid);
                 c.getGradableList().get(i).setgID(gid);
                 gdb.addGradableToOneCourse(g);
+            }
+        }
+        if (c.getCategoryList()!=null && c.getCategoryList().size()!=0){
+            for (Category gc:c.getCategoryList()){
+                CategoryDB cdb = new CategoryDB();
+                gc.setCourseid(c.getCourseID());
+                cdb.insertCategory(gc);
             }
         }
         return c;

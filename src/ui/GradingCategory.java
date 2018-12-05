@@ -3,11 +3,11 @@ package ui;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Category {
+public class GradingCategory {
 
     private final SimpleStringProperty gradingCategory;
 
-    public Category(String gradingCategory) {
+    public GradingCategory(String gradingCategory) {
         this.gradingCategory = new SimpleStringProperty(gradingCategory);
     }
 

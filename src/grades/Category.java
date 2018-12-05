@@ -2,14 +2,14 @@ package grades;
 
 import java.math.BigDecimal;
 
-public class GradableCategory {
+public class Category {
     private String categoryName;
     private BigDecimal weight_ungrad;
     private BigDecimal weight_grad;
     private int courseid;
 
-    public GradableCategory(){}
-    public GradableCategory(int courseid,String categoryName,BigDecimal weightForUngrad,BigDecimal weightForGrad){
+    public Category(){}
+    public Category(int courseid, String categoryName, BigDecimal weightForUngrad, BigDecimal weightForGrad){
         this.courseid=courseid;
         this.categoryName=categoryName;
         weight_grad=weightForGrad;

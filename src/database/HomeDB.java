@@ -89,24 +89,36 @@ public class HomeDB extends DBconn implements HomeDAO {
                     ") ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;";
             stmt=newConn.prepareStatement(sql);
             stmt.execute();
+            sql="CREATE TABLE `category` (\n" +
+                    "  `courseid` int(11) NOT NULL,\n" +
+                    "  `categoryName` varchar(255) NOT NULL,\n" +
+                    "  `weight_undergraduate` decimal(10,2) DEFAULT NULL,\n" +
+                    "  `weight_graduate` decimal(10,2) DEFAULT NULL,\n" +
+                    "  PRIMARY KEY (`courseid`,`categoryName`),\n" +
+                    "  KEY `categoryName` (`categoryName`),\n" +
+                    "  CONSTRAINT `foreignkey10` FOREIGN KEY (`courseid`) REFERENCES `course` (`courseid`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            stmt=newConn.prepareStatement(sql);
+            stmt.execute();
             sql="CREATE TABLE `gradable` (\n" +
                     "  `gradableid` int(11) NOT NULL AUTO_INCREMENT,\n" +
                     "  `gname` varchar(255) DEFAULT NULL,\n" +
                     "  `maxscore` decimal(11,3) DEFAULT NULL,\n" +
                     "  `type` varchar(45) DEFAULT NULL,\n" +
-                    "  PRIMARY KEY (`gradableid`)\n" +
-                    ") ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;";
+                    "  PRIMARY KEY (`gradableid`),\n" +
+                    "  KEY `foreignkey12` (`type`),\n" +
+                    "  CONSTRAINT `foreignkey12` FOREIGN KEY (`type`) REFERENCES `category` (`categoryName`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                    ") ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;";
 
             stmt=newConn.prepareStatement(sql);
             stmt.execute();
-            sql="CREATE TABLE `student` (\n" +
+            sql= "CREATE TABLE `student` (\n" +
                     "  `studentid` varchar(40) NOT NULL,\n" +
                     "  `first_name` varchar(255) DEFAULT NULL,\n" +
                     "  `last_name` varchar(255) DEFAULT NULL,\n" +
                     "  `type` varchar(40) DEFAULT NULL,\n" +
-                    "  `customized` int(255) unsigned zerofill DEFAULT '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',\n" +
                     "  PRIMARY KEY (`studentid`)\n" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8;\n";
 
             stmt=newConn.prepareStatement(sql);
             stmt.execute();
@@ -114,6 +126,7 @@ public class HomeDB extends DBconn implements HomeDAO {
             sql="CREATE TABLE `register` (\n" +
                     "  `StudentId` varchar(10) NOT NULL,\n" +
                     "  `CourseId` int(40) NOT NULL,\n" +
+                    "  `customized` int(11) unsigned zerofill DEFAULT '00000000000',\n" +
                     "  PRIMARY KEY (`StudentId`,`CourseId`),\n" +
                     "  KEY `foreignkey6` (`CourseId`),\n" +
                     "  CONSTRAINT `foreignkey5` FOREIGN KEY (`StudentId`) REFERENCES `student` (`studentid`) ON DELETE CASCADE ON UPDATE CASCADE,\n" +

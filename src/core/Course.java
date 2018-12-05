@@ -8,6 +8,7 @@ import database.GradableDB;
 import database.GradeDB;
 import database.StudentDB;
 import grades.Gradable;
+import grades.Category;
 import grades.Grade;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class Course {
 
     private List<Student> studentList;
     private List<Gradable> gradableList;
+    private List<Category> categoryList;
     private String courseName;
     private int courseID;
 
@@ -34,6 +36,14 @@ public class Course {
         courseName=name;
         studentList=sList;
         gradableList=gList;
+    }
+
+    public Course(int ID,String name,List<Student> sList,List<Gradable> gList,List<Category> cList){
+        courseID=ID;
+        courseName=name;
+        studentList=sList;
+        gradableList=gList;
+        categoryList=cList;
     }
 
     public List<Student> getStudentList() {
@@ -66,6 +76,14 @@ public class Course {
 
     public void setCourseID(int courseID) {
         this.courseID = courseID;
+    }
+
+    public List<Category> getCategoryList() {
+        return categoryList;
+    }
+
+    public void setCategoryList(List<Category> categoryList) {
+        this.categoryList = categoryList;
     }
 
     // Add student to class from on click event in the UI
