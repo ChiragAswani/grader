@@ -66,32 +66,101 @@ public class CourseList extends Application {
 
         final Text coursesTitle = new Text();
         coursesTitle.setText("Courses");
-        grid.add(coursesTitle, i, 0);
-        i++;
+        coursesTitle.setFont(new Font(20));
+        coursesTitle.setUnderline(true);
+        grid.add(coursesTitle, 0, 0);
         while(i < courses.size()){
             String courseID = courses.get(i)[0];
-            String course = courses.get(i)[1];
-            Button courseButton = new Button(course);
-            courseButton.setOnAction(new EventHandler<ActionEvent>() {
+            String courseName = courses.get(i)[1];
+
+            Text courseText = new Text();
+            courseText.setText(courseName);
+            i++;
+            grid.add(courseText, 0, i);
+
+              Button viewCourse = new Button("View");
+            viewCourse.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override public void handle(ActionEvent e) {
+                        MainUI ui = new MainUI(h.loadCourse(courseID));
+                        Stage a = new Stage();
+                        ui.start(a);
+                        dialog.close();
+
+                    }
+                });
+            viewCourse.setMaxWidth(Double.MAX_VALUE);
+            grid.add(viewCourse, 1, i);
+
+            Button renameCourse = new Button("Rename");
+            renameCourse.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent e) {
-                    stage.close();
-                    MainUI ui = new MainUI(h.loadCourse(courseID));
-                    Stage a = new Stage();
-                    ui.start(a);
+                    Dialog d = new Dialog();
+                    d.setTitle("Rename Course");
+                    d.setHeaderText("Rename Course: "+ courseName);
+
+                    ButtonType confirmPassword = new ButtonType("Rename Course", ButtonBar.ButtonData.APPLY.OK_DONE);
+                    d.getDialogPane().getButtonTypes().addAll(confirmPassword, ButtonType.CANCEL);
+
+                    GridPane g = new GridPane();
+                    g.setHgap(10);
+                    g.setVgap(10);
+                    g.setPadding(new Insets(20, 150, 10, 10));
+
+                    final TextField newPassword = new TextField();
+                    newPassword.setPromptText("Course Name");
+
+                    final Text courseNameText = new Text();
+                    courseNameText.setText(courseName);
+
+                    g.add(new Label("Old Course Name"), 0, 0);
+                    g.add(courseNameText, 1, 0);
+
+                    g.add(new Label("New Course Name"), 0, 1);
+                    g.add(newPassword, 1, 1);
+
+                    d.getDialogPane().setContent(g);
+
+                    Optional<String> result = d.showAndWait();
+                    if (result.isPresent()){
+//                    changeCourseName(newPassword.getText());
+                    }
                 }
             });
-            i++;
-            courseButton.setMaxWidth(Double.MAX_VALUE);
-            grid.add(courseButton, i, 0);
+            renameCourse.setMaxWidth(Double.MAX_VALUE);
+            grid.add(renameCourse, 2, i);
+
+            Button archiveCourse = new Button("Archive");
+            archiveCourse.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent e) {
+                }
+            });
+            archiveCourse.setMaxWidth(Double.MAX_VALUE);
+            grid.add(archiveCourse, 3, i);
+
+            Button deleteCourse = new Button("Delete");
+            deleteCourse.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent e) {
+//                    h.deleteCourse(courseID);
+                }
+            });
+            deleteCourse.setMaxWidth(Double.MAX_VALUE);
+            grid.add(deleteCourse, 4, i);
+
         }
+        final Text actionsHeader = new Text();
+        actionsHeader.setText("Actions");
+        actionsHeader.setFont(new Font(20));
+        actionsHeader.setUnderline(true);
+        grid.add(actionsHeader, 0, i+2);
 
         final Text createANewCourseText = new Text();
         createANewCourseText.setText("Create A New Course");
-        grid.add(createANewCourseText, 0, 1);
+        grid.add(createANewCourseText, 0, i+3);
 
         final TextField createANewCourseTextField = new TextField();
         createANewCourseTextField.setPromptText("Course Name");
-        grid.add(createANewCourseTextField, 2, 1);
+        grid.add(createANewCourseTextField, 1, i+3);
+
 
         Button addCourseButton = new Button("Create Course");
         addCourseButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -102,10 +171,58 @@ public class CourseList extends Application {
                 ui.start(a);
             }
         });
-        grid.add(addCourseButton, 3, 1);
+        grid.add(addCourseButton, 2, i+3);
+
+        Button viewArchivesButton = new Button("View Archives");
+        viewArchivesButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+
+            }
+        });
+        grid.add(viewArchivesButton, 0, i+4);
+
+
+        resetPasswordButton(grid, 0, i+5);
 
         dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Quit", ButtonBar.ButtonData.APPLY.OK_DONE));
         Optional<String> result = dialog.showAndWait();
+        dialog.close();
 
     }
+
+    public void resetPasswordButton(GridPane grid, Integer columnIndex, Integer rowIndex){
+        Button resetPasswordButton = new Button("Reset Password");
+        resetPasswordButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Dialog dialog = new Dialog();
+                dialog.setTitle("Authentication");
+                dialog.setHeaderText("Reset Password");
+
+                ButtonType confirmPassword = new ButtonType("Confirm Password", ButtonBar.ButtonData.APPLY.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(confirmPassword, ButtonType.CANCEL);
+
+                GridPane grid = new GridPane();
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.setPadding(new Insets(20, 150, 10, 10));
+
+                final TextField newPassword = new TextField();
+                newPassword.setPromptText("New Password");
+
+                grid.add(new Label("Enter New Password"), 0, 0);
+                grid.add(newPassword, 1, 0);
+
+                dialog.getDialogPane().setContent(grid);
+
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()){
+//                    resetPassword(newPassword.getText());
+                }
+
+            }
+        });
+        grid.add(resetPasswordButton, columnIndex, rowIndex);
+    }
+
 }

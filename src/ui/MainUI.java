@@ -32,6 +32,7 @@ import javax.print.DocFlavor;
 import java.math.BigDecimal;
 import java.util.*;
 
+
 public class MainUI extends Application {
 
     private TableView<Person> table = new TableView<Person>();
@@ -368,7 +369,6 @@ public class MainUI extends Application {
         TableColumn gC = new TableColumn(gradingCategory);
         gC.setMinWidth(100);
         gC.setCellValueFactory(new PropertyValueFactory<GradingCategory, String>(gradingCategory));
-        gC.setCellFactory(cellFactory);
 
         Button addAssignment = new Button("+");
         addAssignment.setOnAction(new EventHandler<ActionEvent>() {
