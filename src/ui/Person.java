@@ -7,11 +7,13 @@ public class Person {
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty lastName;
     private final SimpleStringProperty BUID;
+    private final SimpleStringProperty test;
 
-    public Person(String fName, String lName, String BUID) {
+    public Person(String fName, String lName, String BUID, String test) {
         this.firstName = new SimpleStringProperty(fName);
         this.lastName = new SimpleStringProperty(lName);
         this.BUID = new SimpleStringProperty(BUID);
+        this.test = new SimpleStringProperty(test);
     }
 
     public String getFirstName() {
@@ -36,6 +38,10 @@ public class Person {
 
     public void setBUID(String fName) {
         BUID.set(fName);
+    }
+
+    public void setTest(String t) {
+        test.set(t);
     }
 
 

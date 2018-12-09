@@ -2,16 +2,12 @@ package ui;
 
 import core.Home;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -57,9 +53,9 @@ public class HomeScreen extends Application {
             Boolean isPasswordValid = h.login(passwordInput.getText());
             if(isPasswordValid){
                 stage.close();
-                CourseList courseList = new CourseList();
+                Dashboard dashboard = new Dashboard();
                 Stage a = new Stage();
-                courseList.start(a);
+                dashboard.start(a);
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error Message");

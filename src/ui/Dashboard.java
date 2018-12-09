@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class CourseList extends Application {
+public class Dashboard extends Application {
 
     final HBox hb = new HBox();
 
@@ -173,16 +173,31 @@ public class CourseList extends Application {
         });
         grid.add(addCourseButton, 2, i+3);
 
+        Button tagManagement = new Button("Tag Management");
+        tagManagement.setMaxWidth(Double.MAX_VALUE);
+        tagManagement.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                stage.close();
+                TagManagement tagManagement1 = new TagManagement();
+                Stage a = new Stage();
+                tagManagement1.start(a);
+            }
+        });
+        grid.add(tagManagement, 0, i+4);
+
+
+
         Button viewArchivesButton = new Button("View Archives");
+        viewArchivesButton.setMaxWidth(Double.MAX_VALUE);
         viewArchivesButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
 
             }
         });
-        grid.add(viewArchivesButton, 0, i+4);
+        grid.add(viewArchivesButton, 0, i+5);
 
 
-        resetPasswordButton(grid, 0, i+5);
+        resetPasswordButton(grid, 0, i+6);
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Quit", ButtonBar.ButtonData.APPLY.OK_DONE));
@@ -193,6 +208,7 @@ public class CourseList extends Application {
 
     public void resetPasswordButton(GridPane grid, Integer columnIndex, Integer rowIndex){
         Button resetPasswordButton = new Button("Reset Password");
+        resetPasswordButton.setMaxWidth(Double.MAX_VALUE);
         resetPasswordButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 Dialog dialog = new Dialog();
