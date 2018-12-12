@@ -37,6 +37,63 @@ public class CourseDB extends DBconn implements CourseDAO {
                     glist,
                     cList
             );
+            c.setArchived(rs.getInt("archived"));
+            CourseList.add(c);
+        }
+        DBconn.closeAll(conn, stmt, rs);
+        return CourseList;
+    }
+
+    @Override
+    public List<Course> findAllUnArchivedCourse() throws Exception {
+        Connection conn=DBconn.getConnection();
+        String sql="select * from course where archived=0";
+        PreparedStatement stmt= conn.prepareStatement(sql);
+        ResultSet rs=    stmt.executeQuery();
+        List<Course> CourseList=new ArrayList<Course>();
+        while(rs.next()) {
+            StudentDB sDB=new StudentDB();
+            GradableDB gDB=new GradableDB();
+            CategoryDB cDB=new CategoryDB();
+            List<Category> cList=cDB.findAllCategoryInOneCourse(rs.getInt("courseid"));
+            List<Gradable> glist=gDB.findAllGradableInCourse(rs.getInt("courseid"));
+            List<Student> sList=sDB.findAllStudentInCourse(rs.getInt("courseid"));
+            Course c=new Course(
+                    rs.getInt("courseid"),
+                    rs.getString("cname"),
+                    sList,
+                    glist,
+                    cList
+            );
+            c.setArchived(rs.getInt("archived"));
+            CourseList.add(c);
+        }
+        DBconn.closeAll(conn, stmt, rs);
+        return CourseList;
+    }
+
+    @Override
+    public List<Course> findAllArchivedCourse() throws Exception {
+        Connection conn=DBconn.getConnection();
+        String sql="select * from course where archived=1";
+        PreparedStatement stmt= conn.prepareStatement(sql);
+        ResultSet rs=    stmt.executeQuery();
+        List<Course> CourseList=new ArrayList<Course>();
+        while(rs.next()) {
+            StudentDB sDB=new StudentDB();
+            GradableDB gDB=new GradableDB();
+            CategoryDB cDB=new CategoryDB();
+            List<Category> cList=cDB.findAllCategoryInOneCourse(rs.getInt("courseid"));
+            List<Gradable> glist=gDB.findAllGradableInCourse(rs.getInt("courseid"));
+            List<Student> sList=sDB.findAllStudentInCourse(rs.getInt("courseid"));
+            Course c=new Course(
+                    rs.getInt("courseid"),
+                    rs.getString("cname"),
+                    sList,
+                    glist,
+                    cList
+            );
+            c.setArchived(rs.getInt("archived"));
             CourseList.add(c);
         }
         DBconn.closeAll(conn, stmt, rs);

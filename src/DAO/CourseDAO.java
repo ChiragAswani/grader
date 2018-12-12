@@ -7,6 +7,10 @@ import java.util.List;
 public interface CourseDAO {
     public List<Course> findAllCourse() throws Exception;
     // find all course in database .
+    public List<Course> findAllUnArchivedCourse() throws Exception;
+    public List<Course> findAllArchivedCourse() throws Exception;
+
+
     public Course findOneCourse(int courseID) throws Exception;
     // find one course by courseid
     public Course insertCourse(Course c) throws Exception;

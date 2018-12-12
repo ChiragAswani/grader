@@ -85,6 +85,7 @@ public class HomeDB extends DBconn implements HomeDAO {
             sql="CREATE TABLE `course` (\n" +
                     "  `courseid` int(40) NOT NULL AUTO_INCREMENT,\n" +
                     "  `cname` varchar(255) DEFAULT NULL,\n" +
+                    "  `archived` int(11) DEFAULT '0',\n"+
                     "  PRIMARY KEY (`courseid`)\n" +
                     ") ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;";
             stmt=newConn.prepareStatement(sql);
