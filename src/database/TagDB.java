@@ -52,7 +52,7 @@ public class TagDB extends DBconn implements TagDAO {
     @Override
     public int insertTag(Tag t) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="INSERT INTO tag(tanme) VALUES(?)";
+        String sql="INSERT INTO tag(tname) VALUES(?)";
         PreparedStatement stmt= conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1,t.getTname());
         stmt.executeUpdate();
