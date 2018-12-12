@@ -185,5 +185,14 @@ public class Home {
             e.printStackTrace();
         }
     }
+    public void deleteCourse(Course course){
+        CourseDAO courseDB=new CourseDB();
+        try{
+            courseDB.deleteCourse(course);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
 }
