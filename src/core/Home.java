@@ -2,8 +2,11 @@ package core;
 
 import DAO.CourseDAO;
 import DAO.HomeDAO;
+import DAO.TagDAO;
 import database.CourseDB;
 import database.HomeDB;
+import database.TagDB;
+import grades.Tag;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -113,4 +116,31 @@ public class Home {
         }
     }
 
+    public void createTag(String tagName){
+        TagDAO tagDB=new TagDB();
+        try{
+            Tag insertTag=new Tag();
+            insertTag.setTname(tagName);
+            tagDB.insertTag(insertTag);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public List<Tag> getAllTag(){
+        TagDAO tagDB=new TagDB();
+        try{
+            return  tagDB.findAllTag();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void deleteTag(Tag t){
+        TagDAO tagDB=new TagDB();
+        try{
+            tagDB.deleteTag(t);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
