@@ -122,6 +122,7 @@ public class CourseDB extends DBconn implements CourseDAO {
                     glist,
                     cList
             );
+            c.setArchived(rs.getInt("archived"));
             course=c;
         }
         DBconn.closeAll(conn, stmt, rs);
@@ -131,9 +132,10 @@ public class CourseDB extends DBconn implements CourseDAO {
     @Override
     public Course insertCourse(Course c) throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="INSERT into course(cname) values (?)";
+        String sql="INSERT into course(cname,archived) values (?,?)";
         PreparedStatement stmt= conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1,c.getCourseName());
+        stmt.setInt(2,c.getArchived());
         stmt.executeUpdate();
         ResultSet tableKeys = stmt.getGeneratedKeys();
         tableKeys.next();
@@ -182,10 +184,11 @@ public class CourseDB extends DBconn implements CourseDAO {
     @Override
     public void updateCourse(Course c) throws Exception{
         Connection conn=DBconn.getConnection();
-        String sql="Update course set cname=? where courseid=?";
+        String sql="Update course set cname=?,archived=? where courseid=?";
         PreparedStatement stmt=conn.prepareStatement(sql);
         stmt.setString(1,c.getCourseName());
-        stmt.setInt(2,c.getCourseID());
+        stmt.setInt(2,c.getArchived());
+        stmt.setInt(3,c.getCourseID());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
     }
