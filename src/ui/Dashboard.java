@@ -101,16 +101,16 @@ public class Dashboard extends Application {
                     d.setTitle("Rename Course");
                     d.setHeaderText("Rename Course: "+ courseName);
 
-                    ButtonType confirmPassword = new ButtonType("Rename Course", ButtonBar.ButtonData.APPLY.OK_DONE);
-                    d.getDialogPane().getButtonTypes().addAll(confirmPassword, ButtonType.CANCEL);
+                    ButtonType confirmRenameCourse = new ButtonType("Rename Course", ButtonBar.ButtonData.APPLY.OK_DONE);
+                    d.getDialogPane().getButtonTypes().addAll(confirmRenameCourse, ButtonType.CANCEL);
 
                     GridPane g = new GridPane();
                     g.setHgap(10);
                     g.setVgap(10);
                     g.setPadding(new Insets(20, 150, 10, 10));
 
-                    final TextField newPassword = new TextField();
-                    newPassword.setPromptText("Course Name");
+                    final TextField newCourseName = new TextField();
+                    newCourseName.setPromptText("Course Name");
 
                     final Text courseNameText = new Text();
                     courseNameText.setText(courseName);
@@ -119,13 +119,18 @@ public class Dashboard extends Application {
                     g.add(courseNameText, 1, 0);
 
                     g.add(new Label("New Course Name"), 0, 1);
-                    g.add(newPassword, 1, 1);
+                    g.add(newCourseName, 1, 1);
 
                     d.getDialogPane().setContent(g);
 
                     Optional<String> result = d.showAndWait();
                     if (result.isPresent()){
-//                    changeCourseName(newPassword.getText());
+                        Course c = new Course();
+                        c.setCourseID(Integer.parseInt(courseID));
+                        c.setCourseName(newCourseName.getText());
+                        c.setArchived(0);
+                        h.updateCourse(c);
+
                     }
                 }
             });
@@ -143,7 +148,8 @@ public class Dashboard extends Application {
             Button deleteCourse = new Button("Delete");
             deleteCourse.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent e) {
-//                    h.deleteCourse(courseID);
+                    Course c = new Course();
+                    c.setCourseID(Integer.parseInt(courseID));
                 }
             });
             deleteCourse.setMaxWidth(Double.MAX_VALUE);
