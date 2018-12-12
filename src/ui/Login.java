@@ -10,14 +10,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Optional;
 
-public class HomeScreen extends Application {
-
-    final HBox hb = new HBox();
+public class Login extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -25,8 +22,6 @@ public class HomeScreen extends Application {
 
     @Override
     public void start(Stage stage) {
-
-        Scene scene = new Scene(new Group());
 
         final PasswordField passwordInput = new PasswordField();
         passwordInput.setPromptText("Enter Password Here");
