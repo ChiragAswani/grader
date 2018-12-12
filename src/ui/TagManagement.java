@@ -2,6 +2,7 @@ package ui;
 
 import core.Course;
 import core.Home;
+import grades.Tag;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,8 +49,9 @@ public class TagManagement extends Application {
         Scene scene = new Scene(new Group());
         Dialog dialog = new Dialog();
 
-        ArrayList<String> tagList = new ArrayList();
-        tagList.add("took an extra 5 minutes");
+
+        Home h = new Home();
+        List<Tag> tagList =  h.getAllTag();
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -64,7 +66,8 @@ public class TagManagement extends Application {
         tagsTitle.setUnderline(true);
         grid.add(tagsTitle, 0, 0);
         while(i < tagList.size()){
-            String tagName = tagList.get(i);
+            Tag tagObj = tagList.get(i);
+            String tagName = tagList.get(i).getTname();
 
             Text tagText = new Text();
             tagText.setText(tagName);
@@ -74,7 +77,7 @@ public class TagManagement extends Application {
             Button viewCourse = new Button("Delete");
             viewCourse.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent e) {
-
+                    h.deleteTag(tagObj);
                     dialog.close();
                 }
             });
@@ -94,13 +97,11 @@ public class TagManagement extends Application {
         Button addTagButton = new Button("Create Tag");
         addTagButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+                h.createTag(createANewTagTextField.getText());
                 dialog.close();
             }
         });
         grid.add(addTagButton, 2, i+2);
-
-
-
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Quit", ButtonBar.ButtonData.APPLY.OK_DONE));
