@@ -234,7 +234,8 @@ public class Dashboard extends Application {
 
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()){
-//                    resetPassword(newPassword.getText());
+                    Home h = new Home();
+                    h.changeLogin(newPassword.getText());
                 }
 
             }
