@@ -2,7 +2,9 @@ package ui;
 
 import Student.Student;
 import core.Course;
+import core.Home;
 import grades.Gradable;
+import grades.Tag;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +27,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -78,24 +81,22 @@ public class MainUI extends Application {
                         grid.add(new Label("Points Missed"), 0, 3);
                         grid.add(pointsMissed, 1, 3);
 
-                        ArrayList<String> selectedTags = new ArrayList();
-                        ArrayList<String> tagList = new ArrayList();
-                        tagList.add("tag1");
-                        tagList.add("tag2");
-                        tagList.add("tag3");
-                        tagList.add("tag4");
+                        Home h = new Home();
+                        List<Tag> selectedTags = new ArrayList<Tag>();
+                        List<Tag> tagList =  h.getAllTag();
 
                         int i = 0;
                         while (i < tagList.size()){
+                            Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
-                            cb1.setText(tagList.get(i));
+                            cb1.setText(tagList.get(i).getTname());
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
                                     if(new_val){
-                                        selectedTags.add(cb1.getText());
+                                        selectedTags.add(tagObj);
                                     } else{
-                                        selectedTags.remove(cb1.getText());
+                                        selectedTags.remove(tagObj);
                                     }
                                 }
                             });
@@ -103,14 +104,10 @@ public class MainUI extends Application {
                             i++;
                         }
 
-
-
                         dialog.getDialogPane().setContent(grid);
 
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
-                            System.out.println(selectedTags.toString());
-
                             Integer computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
                             cell.startEdit();
                             cell.setText(computedValue.toString() + "/" + tP);

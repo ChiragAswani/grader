@@ -57,6 +57,7 @@ public class Dashboard extends Application {
         Home h = new Home();
         List<String[]> courses = h.seeCourses();
 
+
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -233,7 +234,8 @@ public class Dashboard extends Application {
 
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()){
-//                    resetPassword(newPassword.getText());
+                    Home h = new Home();
+                    h.changeLogin(newPassword.getText());
                 }
 
             }
