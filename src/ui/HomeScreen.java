@@ -2,12 +2,15 @@ package ui;
 
 import core.Home;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -25,7 +28,7 @@ public class HomeScreen extends Application {
 
         Scene scene = new Scene(new Group());
 
-        final TextField passwordInput = new TextField();
+        final PasswordField passwordInput = new PasswordField();
         passwordInput.setPromptText("Enter Password Here");
 
         Dialog dialog = new Dialog();
@@ -43,6 +46,20 @@ public class HomeScreen extends Application {
 
         grid.add(new Label("Password: "), 0, 0);
         grid.add(passwordInput, 1, 0);
+
+        Hyperlink importantInfo = new Hyperlink();
+        importantInfo.setText("First Time Logging in?");
+        importantInfo.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Welcome");
+                alert.setHeaderText("First Time Logging In");
+                alert.setContentText("If this is your first time logging in, " +
+                                     "your initial password will be kept");
+                alert.showAndWait();
+            }
+        });
+        grid.add(importantInfo, 0, 1);
 
         dialog.getDialogPane().setContent(grid);
 

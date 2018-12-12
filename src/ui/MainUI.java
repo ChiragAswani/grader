@@ -298,12 +298,22 @@ public class MainUI extends Application {
                 final TextField graduateWeight = new TextField();
                 graduateWeight.setPromptText("i.e 10");
 
+                final Text graduateWeightPercent = new Text();
+                graduateWeightPercent.setText("%");
+
+                final Text undergraduateWeightPercent = new Text();
+                undergraduateWeightPercent.setText("%");
+
                 grid.add(new Label("Grading Category"), 0, 0);
                 grid.add(addGradingCategoryInput, 1, 0);
-                grid.add(new Label("UnderGraduate Weight"), 0, 1);
+
+                grid.add(new Label("Undergraduate Weight"), 0, 1);
                 grid.add(underGraduateWeight, 1, 1);
+                grid.add(undergraduateWeightPercent, 2, 1);
+
                 grid.add(new Label("Graduate Weight"), 0, 2);
                 grid.add(graduateWeight, 1, 2);
+                grid.add(graduateWeightPercent, 2, 2);
 
                 dialog.getDialogPane().setContent(grid);
 
@@ -431,7 +441,6 @@ public class MainUI extends Application {
                 grid.add(new Label("Graduate Weight"), 0, 3);
                 grid.add(addGradWeight, 1, 3);
                 grid.add(percent, 2, 3);
-
 
                 dialog.getDialogPane().setContent(grid);
 

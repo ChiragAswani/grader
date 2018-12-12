@@ -49,10 +49,7 @@ public class TagManagement extends Application {
         Dialog dialog = new Dialog();
 
         ArrayList<String> tagList = new ArrayList();
-        tagList.add("tag1");
-        tagList.add("tag2");
-        tagList.add("tag3");
-        tagList.add("tag4");
+        tagList.add("took an extra 5 minutes");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
