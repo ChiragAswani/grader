@@ -24,52 +24,54 @@ import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
 import javax.print.DocFlavor;
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Dashboard extends Application {
-
-    final HBox hb = new HBox();
-
-    //make a dashboard
 
     public static void main(String[] args) {
         launch(args);
     }
 
+    public DateTimeFormatter getTimeStamp(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        return dtf;
+    }
+
+    public void setCoursesTitle(GridPane grid){
+        final Text coursesTitle = new Text();
+        coursesTitle.setText("Courses");
+        coursesTitle.setFont(new Font(20));
+        coursesTitle.setUnderline(true);
+        grid.add(coursesTitle, 0, 0);
+    }
+
+    public void setCourseRowProperties(GridPane gridPane, Integer i){
+
+    }
+
     @Override
     public void start(Stage stage) {
-
-        Scene scene = new Scene(new Group());
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         Dialog dialog = new Dialog();
         dialog.setTitle("Dashboard");
         dialog.setHeaderText("Hello, Christine Papadakis\n\n" +
-                             "Logged In At: " + dtf.format(now));
+                             "Logged In At: " + getTimeStamp().format(now));
         dialog.setGraphic(new ImageView(this.getClass().getResource("login.jpg").toString()));
 
         Home h = new Home();
         List<String[]> courses = h.seeCourses();
-
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
-        int i = 0;
+        setCoursesTitle(grid);
 
-        final Text coursesTitle = new Text();
-        coursesTitle.setText("Courses");
-        coursesTitle.setFont(new Font(20));
-        coursesTitle.setUnderline(true);
-        grid.add(coursesTitle, 0, 0);
+        int i = 0;
         while(i < courses.size()){
             String courseID = courses.get(i)[0];
             String courseName = courses.get(i)[1];
@@ -79,7 +81,7 @@ public class Dashboard extends Application {
             i++;
             grid.add(courseText, 0, i);
 
-              Button viewCourse = new Button("View");
+            Button viewCourse = new Button("View");
             viewCourse.setOnAction(new EventHandler<ActionEvent>() {
                     @Override public void handle(ActionEvent e) {
                         MainUI ui = new MainUI(h.loadCourse(courseID));
