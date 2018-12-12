@@ -25,6 +25,8 @@ public class Course {
     private List<Category> categoryList;
     private String courseName;
     private int courseID;
+    private int archived=0;
+
 
     public Course(){
         studentList=new ArrayList<>();
@@ -44,6 +46,14 @@ public class Course {
         studentList=sList;
         gradableList=gList;
         categoryList=cList;
+    }
+
+    public int getArchived() {
+        return archived;
+    }
+
+    public void setArchived(int archived) {
+        this.archived = archived;
     }
 
     public List<Student> getStudentList() {
