@@ -40,8 +40,8 @@ public class Person {
         BUID.set(fName);
     }
 
-    public void setTest(String t) {
-        test.set(t);
+    public void setGradable(String gradable){
+        test.set(gradable);
     }
 
 

@@ -104,7 +104,7 @@ public class TagManagement extends Application {
         grid.add(addTagButton, 2, i+2);
 
         dialog.getDialogPane().setContent(grid);
-        dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Quit", ButtonBar.ButtonData.APPLY.OK_DONE));
+        dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Back", ButtonBar.ButtonData.APPLY.OK_DONE));
         Optional<String> result = dialog.showAndWait();
         dialog.close();
 

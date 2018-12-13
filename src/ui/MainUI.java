@@ -16,7 +16,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -27,9 +31,13 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
+import javax.swing.text.html.ImageView;
+import java.awt.*;
+import java.io.FileInputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.List;
 
 
 public class MainUI extends Application {
@@ -108,6 +116,7 @@ public class MainUI extends Application {
 
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
+
                             Integer computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
                             cell.startEdit();
                             cell.setText(computedValue.toString() + "/" + tP);
@@ -157,6 +166,7 @@ public class MainUI extends Application {
 //            course.de
         }
     }
+
 
     @Override
     public void start(Stage stage) {
@@ -337,7 +347,11 @@ public class MainUI extends Application {
                 stage.close();
                 Dashboard dashboard = new Dashboard();
                 Stage a = new Stage();
-                dashboard.start(a);
+                try{
+                    dashboard.start(a);
+                } catch (Exception err){
+                    System.out.println(err);
+                }
             }
         });
 
@@ -486,7 +500,7 @@ public class MainUI extends Application {
                         System.out.println(t.getNewValue());
                         ((Person) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())
-                        ).setTest(t.getNewValue());
+                        ).setGradable(t.getNewValue());
                     }
                 }
         );

@@ -30,8 +30,8 @@ public class Login extends Application {
         dialog.setTitle("Authentication");
         dialog.setHeaderText("Welcome to GradeSafe");
 
-        ButtonType addGradingCategory = new ButtonType("Enter Grading Portal", ButtonBar.ButtonData.APPLY.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
+        ButtonType enterGradingPortal = new ButtonType("Enter Grading Portal", ButtonBar.ButtonData.APPLY.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(enterGradingPortal, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -67,7 +67,11 @@ public class Login extends Application {
                 stage.close();
                 Dashboard dashboard = new Dashboard();
                 Stage a = new Stage();
-                dashboard.start(a);
+                try{
+                    dashboard.start(a);
+                } catch (Exception err){
+                    System.out.println(err);
+                }
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error Message");
