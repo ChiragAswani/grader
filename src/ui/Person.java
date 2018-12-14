@@ -2,48 +2,67 @@ package ui;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Person {
 
-    private final SimpleStringProperty firstName;
-    private final SimpleStringProperty lastName;
-    private final SimpleStringProperty BUID;
-    private final SimpleStringProperty test;
+    public String firstName;
+    public String lastName;
+    public String BUID;
+    public String type;
+    public List<Category> categoryList;
 
-    public Person(String fName, String lName, String BUID, String test) {
-        this.firstName = new SimpleStringProperty(fName);
-        this.lastName = new SimpleStringProperty(lName);
-        this.BUID = new SimpleStringProperty(BUID);
-        this.test = new SimpleStringProperty(test);
-    }
 
-    public String getFirstName() {
-        return firstName.get();
-    }
-
-    public void setFirstName(String fName) {
-        firstName.set(fName);
-    }
-
-    public String getLastName() {
-        return lastName.get();
-    }
-
-    public void setLastName(String fName) {
-        lastName.set(fName);
-    }
-
-    public String getBUID() {
-        return BUID.get();
-    }
-
-    public void setBUID(String fName) {
-        BUID.set(fName);
-    }
-
-    public void setGradable(String gradable){
-        test.set(gradable);
+    public Person(String firstName, String lastName, String BUID, List<Category> categoryList, String type) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.BUID = BUID;
+        this.categoryList = categoryList;
+        this.type = type;
     }
 
 
+    public List<Category> getCategoryList() {
+        return categoryList;
+    }
+
+    public void updateGrade(String categoryName, String assignmentName, int newLost){
+        for (Category category:categoryList){
+            if (category.getCategoryName().equals(categoryName)){
+                for (Assignment assignment:category.getAssignmentList()){
+                    if (assignment.name.equals(assignmentName)){
+                        assignment.updatePointsLost(newLost);
+                    }
+                }
+            }
+        }
+    }
+
+    public List<Category> copyCategories(){
+        ArrayList<Category> categories = new ArrayList<>();
+        for (Category category : categoryList) {
+            Category categoryCopy = new Category(category.categoryName, category.ugradWeight, category.gradWeight, category.copyAssingments());
+            categories.add(categoryCopy);
+        }
+        return categories;
+    }
+
+    public void addCategory(String categoryName, String uWeight, String gWeight){
+        Category newCategory = new Category(categoryName, uWeight, gWeight, new ArrayList<>());
+        this.categoryList.add(newCategory);
+    }
+
+    public void addAssignment(String categoryName, String assignmentName, int maxScore){
+        for (Category category:categoryList){
+            if (category.getCategoryName().equals(categoryName)){
+                category.addNewAssignment(assignmentName, maxScore);
+            }
+        }
+    }
+
+    public void setCategoryList(List<Category> categoryList1) {
+        categoryList = categoryList1;
+    }
 }
 

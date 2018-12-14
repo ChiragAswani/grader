@@ -45,6 +45,7 @@ public class MainUI extends Application {
     private TableView<Person> table = new TableView<Person>();
     private final ObservableList<Person> data =
             FXCollections.observableArrayList();
+    private List<Person> students = new ArrayList<>();
     final HBox hb = new HBox();
     private Course course;
 
@@ -269,7 +270,16 @@ public class MainUI extends Application {
                         Person newPerson = new Person(
                                 addFirstName.getText(),
                                 addLastName.getText(),
-                                addBUID.getText(), "0");
+                                addBUID.getText(),
+                                new ArrayList<>(),
+                                comboBox.getSelectionModel().getSelectedItem().toString());
+//                        students.add(newPerson);
+                        if (!students.isEmpty()){
+                            Person masterStudent = students.get(0);
+                            newPerson.setCategoryList(masterStudent.copyCategories());
+                        }
+                        students.add(newPerson);
+
                         data.add(newPerson);
                         addFirstName.clear();
                         addLastName.clear();
@@ -328,7 +338,20 @@ public class MainUI extends Application {
 
                 if (result.isPresent()){
                     String gradingCategory = addGradingCategoryInput.getText();
+                    String uWeight = underGraduateWeight.getText();
+                    String gWeight = graduateWeight.getText();
+                    for (Person student : students) {
+                        student.addCategory(gradingCategory, uWeight, gWeight);
+                    }
+
                     addNewGradingCategoryToTable(gradingCategory);
+                    Home h = new Home();
+
+                    MainUI ui = new MainUI(h.loadCourse(String.valueOf(course.getCourseID())));
+                    Stage a = new Stage();
+                    ui.start(a);
+                    saveState();
+                    stage.close();
                 }
             }
         });
@@ -369,6 +392,30 @@ public class MainUI extends Application {
 
     }
 
+    public void saveState(){
+        System.out.println("Saving state");
+        for (Person student : students) {
+            System.out.println(student.firstName);
+            course.addStudent(student.BUID, student.firstName, student.lastName, 0, student.type);
+            for (Category category : student.categoryList) {
+                for (Assignment assignment : category.assignmentList) {
+                    BigDecimal score =  BigDecimal.valueOf((double) assignment.score);
+                    BigDecimal total =  BigDecimal.valueOf((double) assignment.totalPoints);
+                    BigDecimal gradWeight = BigDecimal.valueOf(Double.parseDouble(category.gradWeight));
+                    BigDecimal ugradWeight = BigDecimal.valueOf(Double.parseDouble(category.ugradWeight));
+                    System.out.println(assignment.name);
+                    course.addGradable(assignment.name, total, ugradWeight, gradWeight, 0, category.categoryName);
+                    course.editGrade(student.BUID, assignment.name, score, assignment.tags);
+                }
+
+            }
+
+        }
+
+
+
+    }
+
     public void readInCourse(){
         HashMap<String, ArrayList<Gradable>> categories = new HashMap<>();
         for (Gradable gradable : course.getGradableList()) {
@@ -385,19 +432,15 @@ public class MainUI extends Application {
             }
         }
 
-//        for (String category : categories.keySet()) {
-//            TableColumn gC = addNewGradingCategoryToTable(category);
-//            for(Gradable gradable:categories.get(category)){
-//                addNewGradable(gradable.getAssignmentName(), gC);
-//            }
-//        }
-
 
         for (Student student : course.getStudentList()) {
             Person newPerson = new Person(
                     student.getFirstName(),
                     student.getLastName(),
-                    student.getStudentID(), "0");
+                    student.getStudentID(),
+                    new ArrayList<>(),
+                    student.getType());
+            students.add(newPerson);
             data.add(newPerson);
         }
     }
@@ -498,9 +541,6 @@ public class MainUI extends Application {
                     @Override
                     public void handle(CellEditEvent<Person, String> t) {
                         System.out.println(t.getNewValue());
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setGradable(t.getNewValue());
                     }
                 }
         );
@@ -569,9 +609,15 @@ public class MainUI extends Application {
                     else if (addUgradWeight.getText().length() == 0 && addGradWeight.getText().length() == 0){
                         System.out.println("Both graduate and undergraduate weight are empty. Please fill in one");
                     } else {
-                        BigDecimal maxScore = BigDecimal.valueOf(Integer.parseInt(addMaxScore.getText())).movePointLeft(2);
-                        BigDecimal ugradWeight = BigDecimal.valueOf(Integer.parseInt(addUgradWeight.getText())).movePointLeft(2);
-                        BigDecimal gradWeight = BigDecimal.valueOf(Integer.parseInt(addGradWeight.getText())).movePointLeft(2);
+//                        BigDecimal maxScore = BigDecimal.valueOf(Integer.parseInt(addMaxScore.getText())).movePointLeft(2);
+//                        BigDecimal ugradWeight = BigDecimal.valueOf(Integer.parseInt(addUgradWeight.getText())).movePointLeft(2);
+//                        BigDecimal gradWeight = BigDecimal.valueOf(Integer.parseInt(addGradWeight.getText())).movePointLeft(2);
+
+                        int maxScore = Integer.parseInt(addMaxScore.getText());
+                        for (Person student : students) {
+                            student.addAssignment(gC.getText(), assignmentName, maxScore);
+                        }
+
                         Button newAssignment = new Button(addAssignmentName.getText());
                         section.setGraphic(newAssignment);
 

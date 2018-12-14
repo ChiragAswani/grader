@@ -10,6 +10,7 @@ import database.StudentDB;
 import grades.Gradable;
 import grades.Category;
 import grades.Grade;
+import grades.Tag;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -96,8 +97,32 @@ public class Course {
         this.categoryList = categoryList;
     }
 
+    public boolean studentPresent(String studentID){
+        for (Student student : studentList) {
+            if (student.getStudentID().equals(studentID)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean assignmentPresent(String assignmentName, String categoryName){
+        for (Gradable gradable : gradableList) {
+            if (gradable.getAssignmentName().equals(assignmentName) && gradable.getType().equals(categoryName)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+
     // Add student to class from on click event in the UI
     public void addStudent(String studentID,String firstName,String lastName, int customWeights, String type){
+        if (studentPresent(studentID)){
+            editStudent(studentID, firstName, lastName,customWeights);
+        }
         Student newStudent = new Student(courseID, studentID, firstName, lastName, customWeights, type);
         studentList.add(newStudent);
         StudentDAO sdb=new StudentDB();
@@ -135,6 +160,9 @@ public class Course {
     }
 
     public int addGradable(String assignmentName, BigDecimal maxScore, BigDecimal weightU, BigDecimal weightG, int customized, String gradableCategory){
+        if (assignmentPresent(assignmentName, gradableCategory)){
+            return -1;
+        }
 //        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
         Gradable newGradable = new Gradable();
         newGradable.setCourseID(courseID);
@@ -167,10 +195,10 @@ public class Course {
         }
     }
 
-    public void editGrade(String studentID, String assignmentName, BigDecimal newScore){
+    public void editGrade(String studentID, String assignmentName, BigDecimal newScore, List<Tag> tags){
         int studentIndex = findStudentIndex(studentID);
         int assignmentIndex = findAssignmentIndex(assignmentName);
-        studentList.get(studentIndex).editGrade(assignmentIndex,newScore);
+        studentList.get(studentIndex).editGrade(assignmentIndex,newScore, tags);
     }
 
     public HashMap<String, String> calculateFinalGrades(){
@@ -194,9 +222,7 @@ public class Course {
                String finalScore = totalScore.divide(totalWeight).toString();
                finalScores.put(studentID, finalScore);
             }
-
         }
-
         return finalScores;
     }
 
