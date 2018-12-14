@@ -60,19 +60,19 @@ public class Login extends Application {
         Optional<String> result = dialog.showAndWait();
 
         if (result.isPresent()){
-            Boolean isPasswordValid = h.login(passwordInput.getText());
-            if(isPasswordValid){
-                Actions action = new Actions();
+            Actions action = new Actions();
+            String passwordText = passwordInput.getText();
+            if (passwordText.contains(" ")){
+                action.triggerAlert("Error Message",
+                        "Authentication Error",
+                        "Password cannot have spaces");
+            } else if(h.login(passwordText)){
                 action.goToDashBoard(stage);
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error Message");
-                alert.setHeaderText("Authentication Error");
-                alert.setContentText("Invalid Password");
-                alert.showAndWait();
+                action.triggerAlert("Error Message",
+                        "Authentication Error",
+                        "Invalid Password! Please try again");
             }
-        } else {
-            System.exit(0);
         }
 
     }

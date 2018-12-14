@@ -262,7 +262,19 @@ public class MainUI extends Application {
         else if (addBUID.getText().length() == 0){
             System.out.println("BUID cannot be empty");
         } else {
-            course.addStudent(addFirstName.getText(), addLastName.getText(), addBUID.getText(), 0, comboBox.getSelectionModel().getSelectedItem().toString());
+            course.addStudent(addBUID.getText(), addFirstName.getText(), addLastName.getText(), 0, comboBox.getSelectionModel().getSelectedItem().toString());
+            /*TODO: FRONT END
+
+            IMPORTANT! In addStudent, when it throws an error, I populate a modal, so it recognizes the error; however,
+            it continues with the code below and adds the person to the table. We need to fix this and follow a similar
+            patter for stuff like adding a grading category with the same name.
+             */
+
+            /*TODO: DATABASE
+
+            Make category name unique. (in each course, you cant have more than 1 grading categories of the same name)
+            Make assignment name unique. (in each course, you cant have more than 1 assignment of the same name)
+             */
             Person newPerson = new Person(
                     addFirstName.getText(),
                     addLastName.getText(),

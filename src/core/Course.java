@@ -10,6 +10,7 @@ import database.StudentDB;
 import grades.Gradable;
 import grades.Category;
 import grades.Grade;
+import ui.Actions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -104,6 +105,10 @@ public class Course {
         try{
             sdb.addStudentToCourse(newStudent);
         }catch (Exception e){
+            Actions action = new Actions();
+            action.triggerAlert("Error Message",
+                    "Database Error",
+                    "Tag name already exists in the database! Please create a new name for your tag");
             e.printStackTrace();
         }
         System.out.println(Arrays.toString(studentList.toArray()));

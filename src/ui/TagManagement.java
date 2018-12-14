@@ -1,4 +1,5 @@
 package ui;
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import core.Home;
 import grades.Tag;
 import javafx.application.Application;
@@ -10,6 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public class TagManagement extends Application {
