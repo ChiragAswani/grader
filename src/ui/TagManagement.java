@@ -1,43 +1,19 @@
 package ui;
-
-import core.Course;
 import core.Home;
 import grades.Tag;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.scene.control.TableView.TableViewSelectionModel;
-
-import javax.print.DocFlavor;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import javafx.application.Platform;
 
 public class TagManagement extends Application {
 
-    final HBox hb = new HBox();
-
-    //make a dashboard
 
     public static void main(String[] args) {
         launch(args);
@@ -45,11 +21,7 @@ public class TagManagement extends Application {
 
     @Override
     public void start(Stage stage) {
-
-        Scene scene = new Scene(new Group());
         Dialog dialog = new Dialog();
-
-
         Home h = new Home();
         List<Tag> tagList =  h.getAllTag();
 
@@ -105,7 +77,7 @@ public class TagManagement extends Application {
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(new ButtonType("Back", ButtonBar.ButtonData.APPLY.OK_DONE));
-        Optional<String> result = dialog.showAndWait();
+        dialog.showAndWait();
         dialog.close();
 
     }

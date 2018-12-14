@@ -140,15 +140,8 @@ public class Dashboard extends Application {
                         c.setCourseName(newCourseName.getText());
                         c.setArchived(0);
                         h.updateCourse(c);
-
-                        Dashboard dashboard = new Dashboard();
-                        Stage a = new Stage();
-                        try{
-                            dashboard.start(a);
-                        } catch (Exception err){
-                            System.out.println(err);
-                        }
-
+                        Actions action = new Actions();
+                        action.goToDashBoard(stage);
                     }
                 }
             });
@@ -163,15 +156,8 @@ public class Dashboard extends Application {
                     c.setCourseName(courseName);
                     c.setArchived(1);
                     h.updateCourse(c);
-
-                    stage.close();
-                    Dashboard dashboard = new Dashboard();
-                    Stage a = new Stage();
-                    try{
-                        dashboard.start(a);
-                    } catch (Exception err){
-                        System.out.println(err);
-                    }
+                    Actions action = new Actions();
+                    action.goToDashBoard(stage);
                 }
             });
             archiveCourse.setMaxWidth(Double.MAX_VALUE);
@@ -183,14 +169,8 @@ public class Dashboard extends Application {
                     Course c = new Course();
                     c.setCourseID(Integer.parseInt(courseID));
                     h.deleteCourse(c);
-                    stage.close();
-                    Dashboard dashboard = new Dashboard();
-                    Stage a = new Stage();
-                    try{
-                        dashboard.start(a);
-                    } catch (Exception err){
-                        System.out.println(err);
-                    }
+                    Actions action = new Actions();
+                    action.goToDashBoard(stage);
                 }
             });
             deleteCourse.setMaxWidth(Double.MAX_VALUE);
@@ -215,10 +195,11 @@ public class Dashboard extends Application {
         Button addCourseButton = new Button("Create");
         addCourseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+                stage.close();
                 MainUI ui = new MainUI(h.createNewCourse(createANewCourseTextField.getText()));
                 Stage a = new Stage();
                 ui.start(a);
-                stage.close();
+
             }
         });
         grid.add(addCourseButton, 2, i+4);

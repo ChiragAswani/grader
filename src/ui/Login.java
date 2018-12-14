@@ -5,11 +5,8 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -20,9 +17,11 @@ public class Login extends Application {
         launch(args);
     }
 
+
     @Override
     public void start(Stage stage) {
 
+        Home h = new Home();
         final PasswordField passwordInput = new PasswordField();
         passwordInput.setPromptText("Enter Password Here");
 
@@ -61,17 +60,10 @@ public class Login extends Application {
         Optional<String> result = dialog.showAndWait();
 
         if (result.isPresent()){
-            Home h = new Home();
             Boolean isPasswordValid = h.login(passwordInput.getText());
             if(isPasswordValid){
-                stage.close();
-                Dashboard dashboard = new Dashboard();
-                Stage a = new Stage();
-                try{
-                    dashboard.start(a);
-                } catch (Exception err){
-                    System.out.println(err);
-                }
+                Actions action = new Actions();
+                action.goToDashBoard(stage);
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error Message");
