@@ -218,6 +218,19 @@ public class Course {
         }
     }
 
+    public List<Gradable> getAssignmentsForCategory(String categoryName){
+        GradableDAO gdb = new GradableDB();
+        Category searchCategory = new Category();
+        searchCategory.setCategoryName(categoryName);
+        searchCategory.setCourseid(courseID);
+        try{
+            return gdb.getAllGradableInOneCategory(searchCategory);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
     public void removeGradable(int gradableID){
         GradableDAO gdb = new GradableDB();
         try{
