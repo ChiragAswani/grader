@@ -269,11 +269,6 @@ public class Course {
         studentList.get(studentIndex).editGrade(assignmentIndex,newScore, tags);
     }
 
-    public void createCategory(){
-
-    }
-
-
     public List<String> calculateFinalGrades(){
         GradeDAO gdb = new GradeDB();
         HashMap<String, String> finalScores = new HashMap<>();
@@ -327,7 +322,7 @@ public class Course {
 
             }
             if (totalWeight.intValue()>0){
-                BigDecimal studentFinalScore = totalScore.divide(totalWeight, 2, RoundingMode.HALF_UP);
+                BigDecimal studentFinalScore = totalScore.divide(totalWeight, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).setScale(1, RoundingMode.HALF_UP);
                 String finalScore = studentFinalScore.toString();
                 finalGrades.add(finalScore);
             }
