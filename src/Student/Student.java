@@ -99,7 +99,7 @@ public class Student {
         Grade grade=new Grade();
         grade.setsID(studentID);
         grade.setgID(gradableid);
-        grade.setScore(new BigDecimal(0));
+        grade.setScore(new BigDecimal(-1));
         grade.setWeighting(weight);
         GradeDAO gdb=new GradeDB();
         try{
@@ -111,6 +111,7 @@ public class Student {
     }
 
     public void editGrade(int index, BigDecimal newScore, List<Tag> tags){
+        setGradeList(getGradeList());
         gradeList.get(index).settList(tags);
         gradeList.get(index).setScore(newScore);
         GradeDAO gdb = new GradeDB();

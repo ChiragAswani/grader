@@ -69,8 +69,8 @@ public class GradableDB extends DBconn implements GradableDAO {
     @Override
     public List<Gradable> getAllGradableInOneCategory(Category c) throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="select * from gradable g, distribution d, category c \n" +
-                "where g.gradableid=d.gradableid and c.categoryName=g.type and d.courseid= ? and c.categoryName=?";
+        String sql="select d.courseid, g.gname, g.gradableid, g.maxscore, g.type, d.weighting_graduate,d.weighting_undergraduate, d.customized from gradable g, distribution d, category c \n"+
+                " where g.gradableid=d.gradableid and d.courseid=c.courseid and c.categoryName=g.type and d.courseid= ? and c.categoryName=?";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setInt(1,c.getCourseid());
         stmt.setString(2,c.getCategoryName());
