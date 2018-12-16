@@ -87,7 +87,9 @@ public class MainUI extends Application {
 
 //                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
 //                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
-                        BigDecimal totalScore = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore();
+
+                        Gradable assignment =  course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
+                        BigDecimal totalScore = assignment.getMaxScore();
                         String tP = prettyString(totalScore);
                         totalPoints.setText(tP);
 
@@ -104,6 +106,11 @@ public class MainUI extends Application {
                         grid.add(totalPoints, 1, 2);
                         grid.add(new Label("Points Missed"), 0, 3);
                         grid.add(pointsMissed, 1, 3);
+
+                        int row = cell.getIndex();
+                        data2.get(row);
+                        String studentId = data2.get(row).get(2).toString();
+                        int gradableId = assignment.getgID();
 
                         Home h = new Home();
                         List<Tag> selectedTags = new ArrayList<Tag>();
@@ -785,10 +792,10 @@ public class MainUI extends Application {
                 String assignmentName = assignmentsInCategory.get(assignmentCounter).getAssignmentName();
 
                 BigDecimal assignmentGrade = gradeInAssignment.get(assignmentCounter).getScore();
-
+                String totalScore = prettyString(assignmentGrade) + "/" + prettyString(assignmentsInCategory.get(assignmentCounter).getMaxScore());
 
                 grid.add(new Label(assignmentName + ":"), 0, rowIndex);
-                grid.add(new Text(prettyString(assignmentGrade)), 1, rowIndex);
+                grid.add(new Text(totalScore), 1, rowIndex);
                 rowIndex++;
             }
         }
