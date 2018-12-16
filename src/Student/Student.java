@@ -79,9 +79,9 @@ public class Student {
         this.customized = customized;
     }
 
-    public List<Grade> getGradeList() {
-        return gradeList;
-    }
+//    public List<Grade> getGradeList() {
+//        return gradeList;
+//    }
 
     public void setGradeList(List<Grade> gradeList) {
         this.gradeList = gradeList;
@@ -120,5 +120,16 @@ public class Student {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public List<Grade> getGradeList(){
+        GradeDAO gdb = new GradeDB();
+        try{
+            return gdb.findOneStudentAllGradeInOneCourse(studentID, courseID);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 }
