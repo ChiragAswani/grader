@@ -21,4 +21,5 @@ public interface GradableDAO {
     public void updateGradable(Gradable g)throws Exception;
     // update gradable.
     public List<Gradable> getAllGradableInOneCategory(Category c) throws Exception;
+    // 
 }
