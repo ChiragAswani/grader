@@ -3,6 +3,7 @@ package Student;
 import DAO.GradeDAO;
 import database.GradeDB;
 import grades.Grade;
+import grades.Tag;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -94,7 +95,8 @@ public class Student {
         this.type = type;
     }
 
-    public void editGrade(int index, BigDecimal newScore){
+    public void editGrade(int index, BigDecimal newScore, List<Tag> tags){
+        gradeList.get(index).settList(tags);
         gradeList.get(index).setScore(newScore);
         GradeDAO gdb = new GradeDB();
         try{
