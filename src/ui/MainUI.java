@@ -232,6 +232,7 @@ public class MainUI extends Application {
             ObservableList<String> studentList = FXCollections.observableArrayList();
             List<Gradable> gradableList = course.getGradableList();
             List<grades.Category> categoryList = course.getCategoryList();
+            int columnCounter = 0;
             try {
 
                 /**
@@ -239,35 +240,21 @@ public class MainUI extends Application {
                  * TABLE COLUMN ADDED DYNAMICALLY *
                  *********************************
                  */
-                TableColumn column1 = new TableColumn("First Name");
-                column1.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(0).toString());
-                    }
-                });
-
+                TableColumn column1 = buildNewColumn(columnCounter, "First Name");
                 table2.getColumns().addAll(column1);
-                System.out.println("Column [" + 0 + "] ");
+                System.out.println("Column [" + columnCounter + "] ");
+                columnCounter++;
 
-                TableColumn column2 = new TableColumn("Last Name");
-                column2.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(1).toString());
-                    }
-                });
-
+                TableColumn column2 = buildNewColumn(columnCounter, "Last Name");
                 table2.getColumns().addAll(column2);
-                System.out.println("Column [" + 1 + "] ");
+                System.out.println("Column [" + columnCounter + "] ");
+                columnCounter++;
 
-                TableColumn column3 = new TableColumn("BUID");
-                column3.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(2).toString());
-                    }
-                });
-
+                TableColumn column3 = buildNewColumn(columnCounter, "BUID");
                 table2.getColumns().addAll(column3);
-                System.out.println("Column [" + 2 + "] ");
+                System.out.println("Column [" + columnCounter + "] ");
+                columnCounter++;
+
 
 //                TableColumn gC = new TableColumn(gradingCategory);
 //                gC.setMinWidth(100);
@@ -287,6 +274,7 @@ public class MainUI extends Application {
 
 
                     List<Gradable> assignmentsInCategory = course.getAssignmentsForCategory(categoryName);
+                    System.out.println("Assignments in category: "+assignmentsInCategory);
 
                     for (Gradable gradable : assignmentsInCategory) {
                         String assignmentName = gradable.getAssignmentName();
@@ -295,8 +283,19 @@ public class MainUI extends Application {
                         Button editAssignment = buildEditAssignmentButton(assignmentName, gradable.getMaxScore(), gradable.getWeight_ungrad(), gradable.getWeight_grad(), categoryColumn, assignmentColumn);
                         assignmentColumn.setGraphic(editAssignment);
                         assignmentColumn.setCellFactory(cellFactory);
+                        int finalColumnCounter = columnCounter;
+                        assignmentColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                            public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                                return new SimpleStringProperty(param.getValue().get(finalColumnCounter).toString());
+                            }
+                        });
+                        columnCounter++;
                         categoryColumn.getColumns().addAll(assignmentColumn);
+
+                        System.out.println("Adding Gradable: "+assignmentName);
                     }
+
+                    System.out.println("Adding Category Column: "+i);
 
                     table2.getColumns().addAll(categoryColumn);
 
@@ -314,7 +313,9 @@ public class MainUI extends Application {
                     row.add(student.getLastName());
                     row.add(student.getStudentID());
                     List<Grade> gradeList = student.getGradeList();
+                    System.out.println(gradeList);
                     for (int i=0; i<gradeList.size(); i++){
+                        System.out.println(gradeList.get(i).getScore());
                         row.add(String.valueOf(gradeList.get(i).getScore()));
                     }
                     for (int i=0; i<gradableList.size()-gradeList.size(); i++){
@@ -652,7 +653,7 @@ public class MainUI extends Application {
                         System.out.println("Maximum Score cannot be empty");
                     } else {
 
-                        int maxScore = Integer.parseInt(addMaxScore.getText());
+                        int maxScore = (int) Double.parseDouble(addMaxScore.getText());
                         for (Person student : students) {
                             student.addAssignment(gC.getText(), assignmentName, maxScore);
                         }
@@ -666,6 +667,16 @@ public class MainUI extends Application {
             }
         });
         return editAssignment;
+    }
+
+    public TableColumn buildNewColumn(int columnCounter, String columnName){
+        TableColumn column = new TableColumn(columnName);
+        column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                return new SimpleStringProperty(param.getValue().get(columnCounter).toString());
+            }
+        });
+        return column;
     }
 
 

@@ -79,9 +79,9 @@ public class Student {
         this.customized = customized;
     }
 
-    public List<Grade> getGradeList() {
-        return gradeList;
-    }
+//    public List<Grade> getGradeList() {
+//        return gradeList;
+//    }
 
     public void setGradeList(List<Grade> gradeList) {
         this.gradeList = gradeList;
@@ -111,6 +111,7 @@ public class Student {
     }
 
     public void editGrade(int index, BigDecimal newScore, List<Tag> tags){
+        setGradeList(getGradeList());
         gradeList.get(index).settList(tags);
         gradeList.get(index).setScore(newScore);
         GradeDAO gdb = new GradeDB();
@@ -120,5 +121,16 @@ public class Student {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public List<Grade> getGradeList(){
+        GradeDAO gdb = new GradeDB();
+        try{
+            return gdb.findOneStudentAllGradeInOneCourse(studentID, courseID);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 }
