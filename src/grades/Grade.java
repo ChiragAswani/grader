@@ -1,5 +1,8 @@
 package grades;
 
+import DAO.GradableDAO;
+import database.GradableDB;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -56,5 +59,15 @@ public class Grade {
 
     public void settList(List<Tag> tList) {
         this.tList = tList;
+    }
+
+    public BigDecimal getTotalScore(int courseId){
+        GradableDAO gdb = new GradableDB();
+        try{
+            return gdb.findOneGradableInCourse(courseId, gID).getMaxScore();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

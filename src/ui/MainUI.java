@@ -82,7 +82,10 @@ public class MainUI extends Application {
                         grid.setPadding(new Insets(20, 150, 10, 10));
 
                         final Text totalPoints = new Text();
-                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
+//                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
+//                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
+                        BigDecimal totalScore = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore();
+                        String tP = totalScore.setScale(2).toString();
                         totalPoints.setText(tP);
 
                         final TextField pointsMissed = new TextField();
@@ -127,22 +130,20 @@ public class MainUI extends Application {
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
 
-                            int computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
+                            if(pointsMissed.getText().equals("")){
+                                return;
+                            }
+
+                            double computedValue =  Double.parseDouble(tP) - Double.parseDouble(pointsMissed.getText());
 
 
                             int row = cell.getIndex();
                             data2.get(row);
                             course.editGrade(String.valueOf(data2.get(row).get(2)),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
                             System.out.println("Editing row: "+data2.get(row));
-
-                            cell.startEdit();
-                            cell.setText(String.valueOf(computedValue) + "/" + tP);
-                            cell.commitEdit(String.valueOf(computedValue) + "/" + tP);
-
-                            data2.get(row);
-                            System.out.println("Finished editing row: "+data2.get(row));
-
                             e.consume();
+                            renderTable(currentStage);
+
                         }
 
                     });
@@ -188,20 +189,20 @@ public class MainUI extends Application {
     }
 
 
-//    public TableColumn addNewGradingCategoryToTable( String gradingCategory){
-//
-//        TableColumn gC = new TableColumn(gradingCategory);
-//        gC.setMinWidth(100);
-//        gC.setCellValueFactory(new PropertyValueFactory<GradingCategory, String>(gradingCategory));
-//        Button addAssignmentButton = buildAddGradableColumn(gC);
-//
-//        gC.setGraphic(addAssignmentButton);
-//        table2.getColumns().addAll(gC);
-//
-//        renderTable(currentStage);
-//
-//        return gC;
-//    }
+    public TableColumn addNewGradingCategoryToTable( String gradingCategory){
+
+        TableColumn gC = new TableColumn(gradingCategory);
+        gC.setMinWidth(100);
+        gC.setCellValueFactory(new PropertyValueFactory<GradingCategory, String>(gradingCategory));
+        Button addAssignmentButton = buildAddGradableColumn(gC);
+
+        gC.setGraphic(addAssignmentButton);
+        table2.getColumns().addAll(gC);
+
+        renderTable(currentStage);
+
+        return gC;
+    }
 
     public void addNewGradable(String assignmentName, BigDecimal maxScore , BigDecimal ugradWeight, BigDecimal gradWeight, TableColumn gC){
         TableColumn section = new TableColumn();
@@ -229,7 +230,7 @@ public class MainUI extends Application {
         //Update Table
         public void buildData() {
             data2 = FXCollections.observableArrayList();
-            ObservableList<String> studentList = FXCollections.observableArrayList();
+            course.refreshEverything();
             List<Gradable> gradableList = course.getGradableList();
             List<grades.Category> categoryList = course.getCategoryList();
             int columnCounter = 0;
@@ -254,15 +255,6 @@ public class MainUI extends Application {
                 table2.getColumns().addAll(column3);
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
-
-
-//                TableColumn gC = new TableColumn(gradingCategory);
-//                gC.setMinWidth(100);
-//                gC.setCellValueFactory(new PropertyValueFactory<GradingCategory, String>(gradingCategory));
-//                Button addAssignmentButton = buildAddGradableColumn(gC);
-//
-//                gC.setGraphic(addAssignmentButton);
-//                table2.getColumns().addAll(gC);
 
                 for (int i=0; i<categoryList.size(); i++){
                     String categoryName = categoryList.get(i).getCategoryName();
@@ -307,7 +299,8 @@ public class MainUI extends Application {
                  * Data added to ObservableList *
                  *******************************
                  */
-                for (Student student : course.getStudentList()) {
+                List<Student> studentList = course.getStudentList();
+                for (Student student : studentList) {
                     ObservableList<String> row = FXCollections.observableArrayList();
                     row.add(student.getFirstName());
                     row.add(student.getLastName());
@@ -315,8 +308,17 @@ public class MainUI extends Application {
                     List<Grade> gradeList = student.getGradeList();
                     System.out.println(gradeList);
                     for (int i=0; i<gradeList.size(); i++){
-                        System.out.println(gradeList.get(i).getScore());
-                        row.add(String.valueOf(gradeList.get(i).getScore()));
+                        Grade grade = gradeList.get(i);
+                        System.out.println(grade.getScore());
+                        int intScore = grade.getScore().intValue();
+                        BigDecimal score = grade.getScore().setScale(2);
+                        BigDecimal total = grade.getTotalScore(course.getCourseID());
+                        if (intScore == -1){
+                            row.add("");
+                        }
+                        else{
+                            row.add(score.stripTrailingZeros().toPlainString() +"/"+total.stripTrailingZeros().toPlainString());
+                        }
                     }
                     for (int i=0; i<gradableList.size()-gradeList.size(); i++){
                         row.add("0");
@@ -324,8 +326,22 @@ public class MainUI extends Application {
 
                     System.out.println("Row [1] added " + row);
                     data2.add(row);
-
                 }
+
+                /**
+                 * ******************************
+                 * Add final scores *
+                 *******************************
+                 */
+                TableColumn finalScoreColumn = buildNewColumn(columnCounter, "Final Grade");
+                table2.getColumns().addAll(finalScoreColumn);
+                System.out.println("Column [" + columnCounter + "] ");
+                columnCounter++;
+                List<String> finalScores = course.calculateFinalGrades();
+                for (int i=0;i<studentList.size(); i++){
+                    data2.get(i).add(finalScores.get(i));
+                }
+
 
 
                 //FINALLY ADDED TO TableView
@@ -453,8 +469,8 @@ public class MainUI extends Application {
                     }
                     course.addCategory(gradingCategory, BigDecimal.valueOf(Double.parseDouble(uWeight)), BigDecimal.valueOf(Double.parseDouble(gWeight)));
 
-                    renderTable(currentStage);
-//                    addNewGradingCategoryToTable(gradingCategory);
+//                    renderTable(currentStage);
+                    addNewGradingCategoryToTable(gradingCategory);
                 }
             }
         });
@@ -658,8 +674,12 @@ public class MainUI extends Application {
                             student.addAssignment(gC.getText(), assignmentName, maxScore);
                         }
 
-                        Button newAssignment = new Button(addAssignmentName.getText());
+                        Button newAssignment = buildEditAssignmentButton(addAssignmentName.getText(), BigDecimal.valueOf(maxScore) , ugradWeight, gradWeight, gC, section);
                         section.setGraphic(newAssignment);
+
+                        renderTable(currentStage);
+
+
 
                     }
                 }
