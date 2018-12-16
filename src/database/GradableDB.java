@@ -67,6 +67,33 @@ public class GradableDB extends DBconn implements GradableDAO {
     }
 
     @Override
+    public Gradable findOneGradableByCategoryNameAndGradableName(int courseid, String gname, String cname) throws Exception {
+        Connection conn=DBconn.getConnection();
+        String sql="select * from gradable g, distribution d \n" +
+                "where g.gradableid=d.gradableid and d.courseid= ? and g.gname=? and g.type=?";
+        PreparedStatement stmt= conn.prepareStatement(sql);
+        stmt.setInt(1,courseid);
+        stmt.setString(2,gname);
+        stmt.setString(3,cname);
+        ResultSet rs=    stmt.executeQuery();
+        Gradable gradableOut = null;
+        if (rs.next()){
+            Gradable gradable=new Gradable();
+            gradable.setgID( rs.getInt("gradableid"));
+            gradable.setAssignmentName(rs.getString("gname"));
+            gradable.setCustomized(rs.getInt("customized"));
+            gradable.setMaxScore(rs.getBigDecimal("maxscore"));
+            gradable.setWeight_grad(rs.getBigDecimal("weighting_graduate"));
+            gradable.setWeight_ungrad(rs.getBigDecimal("weighting_undergraduate"));
+            gradable.setgID(rs.getInt("courseid"));
+            gradable.setType(rs.getString("type"));
+            gradableOut=gradable;
+        }
+        DBconn.closeAll(conn, stmt, rs);
+        return gradableOut;
+    }
+
+    @Override
     public List<Gradable> getAllGradableInOneCategory(Category c) throws Exception {
         Connection conn=DBconn.getConnection();
         String sql="select d.courseid, g.gname, g.gradableid, g.maxscore, g.type, d.weighting_graduate,d.weighting_undergraduate, d.customized from gradable g, distribution d, category c \n"+
