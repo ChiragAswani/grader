@@ -82,9 +82,9 @@ public class MainUI extends Application {
                         grid.setPadding(new Insets(20, 150, 10, 10));
 
                         final Text totalPoints = new Text();
-                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
+//                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
 //                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
-//                        String tP = course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
+                        String tP = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore().toString();
                         totalPoints.setText(tP);
 
                         final TextField pointsMissed = new TextField();
@@ -129,7 +129,7 @@ public class MainUI extends Application {
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
 
-                            int computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
+                            int computedValue = (int) Double.parseDouble(tP) - (int) Double.parseDouble(pointsMissed.getText());
 
 
                             int row = cell.getIndex();
@@ -333,14 +333,14 @@ public class MainUI extends Application {
                  * Add final scores *
                  *******************************
                  */
-//                TableColumn finalScoreColumn = buildNewColumn(columnCounter, "Final Grade");
-//                table2.getColumns().addAll(finalScoreColumn);
-//                System.out.println("Column [" + columnCounter + "] ");
-//                columnCounter++;
-//                List<String> finalScores = course.calculateFinalGrades();
-//                for (int i=0;i<studentList.size(); i++){
-//                    data2.get(i).add(finalScores.get(i));
-//                }
+                TableColumn finalScoreColumn = buildNewColumn(columnCounter, "Final Grade");
+                table2.getColumns().addAll(finalScoreColumn);
+                System.out.println("Column [" + columnCounter + "] ");
+                columnCounter++;
+                List<String> finalScores = course.calculateFinalGrades();
+                for (int i=0;i<studentList.size(); i++){
+                    data2.get(i).add(finalScores.get(i));
+                }
 
 
 

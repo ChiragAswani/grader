@@ -278,29 +278,83 @@ public class Course {
         GradeDAO gdb = new GradeDB();
         HashMap<String, String> finalScores = new HashMap<>();
         List<String> finalGrades = new ArrayList<>();
+
         for (Student student : studentList) {
             BigDecimal totalWeight = new BigDecimal(0);
             BigDecimal totalScore = new BigDecimal(0);
-            for (Gradable gradable : gradableList) {
-               try{
-                   Grade studentGrade = gdb.findOneGrade(student.getStudentID(), gradable.getgID());
-                   BigDecimal studentScore = studentGrade.getScore();
-                   if(studentScore.intValue() == -1){
-                       continue;
-                   }
-                   BigDecimal weight = student.getType() == "grad" ? gradable.getWeight_grad() : gradable.getWeight_ungrad();
-                   totalWeight.add(weight);
-                   totalScore.add(studentScore.multiply(weight));
-               }
-               catch (Exception e){
-                   e.printStackTrace();
-               }
+            for (Category category : categoryList) {
+                BigDecimal catWeight = student.getType() == "grad" ? category.getWeight_grad() : category.getWeight_ungrad();
+                System.out.println("category: "+category.getCategoryName()+" weight: "+catWeight);
+                BigDecimal catScore = new BigDecimal(0);
+                List<Gradable> assignmentsInCategory = getAssignmentsForCategory(category.getCategoryName());
+                int numScoresInCategory = 0;
+
+                for (Gradable gradable : assignmentsInCategory) {
+                    System.out.println("Scoring assignment: "+gradable.getAssignmentName());
+                    try {
+                        Grade studentGrade = gdb.findOneGrade(student.getStudentID(), gradable.getgID());
+                        BigDecimal studentScore = studentGrade.getScore();
+                        if(studentScore.intValue() == -1){
+                            System.out.println("No score");
+                           continue;
+                        }
+                        BigDecimal maxScore = gradable.getMaxScore();
+                        System.out.println("Student got: "+studentScore+"/"+maxScore);
+                        BigDecimal studentDecimal = studentScore.divide(maxScore, 4, RoundingMode.HALF_UP);
+                        BigDecimal scaledScore = studentDecimal.multiply(catWeight);
+                        System.out.println("Student got: "+studentDecimal);
+                        System.out.println("Student scaled got: "+scaledScore);
+
+                        catScore = catScore.add(scaledScore);
+                        System.out.println("Current student score: "+catScore);
+
+                        numScoresInCategory++;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("Number of scores in category: "+ numScoresInCategory);
+
+                if (numScoresInCategory>0){
+                    catScore = catScore.divide(new BigDecimal(numScoresInCategory), 4, RoundingMode.HALF_UP);
+                    System.out.println("Category Score: "+catScore);
+
+                    totalScore = totalScore.add(catScore);
+                    System.out.println("Total Score: "+totalScore);
+                    totalWeight = totalWeight.add(catWeight);
+                    System.out.println("Total Weight : "+totalWeight);
+                }
 
             }
-            String studentID = student.getStudentID();
-            String finalScore = totalScore.divide(totalWeight, 2, RoundingMode.HALF_UP).toString();
-            finalScores.put(studentID, finalScore);
-            finalGrades.add(finalScore);
+            if (totalWeight.intValue()>0){
+                BigDecimal studentFinalScore = totalScore.divide(totalWeight, 2, RoundingMode.HALF_UP);
+                String finalScore = studentFinalScore.toString();
+                finalGrades.add(finalScore);
+            }
+            else{
+                finalGrades.add("NA");
+            }
+//
+//            for (Gradable gradable : gradableList) {
+//               try{
+//                   Grade studentGrade = gdb.findOneGrade(student.getStudentID(), gradable.getgID());
+//                   BigDecimal studentScore = studentGrade.getScore();
+//                   if(studentScore.intValue() == -1){
+//                       continue;
+//                   }
+//                   BigDecimal weight = student.getType() == "grad" ? gradable.getWeight_grad() : gradable.getWeight_ungrad();
+//                   totalWeight.add(weight);
+//                   totalScore.add(studentScore.multiply(weight));
+//               }
+//               catch (Exception e){
+//                   e.printStackTrace();
+//               }
+//
+//            }
+//            String studentID = student.getStudentID();
+//            String finalScore = totalScore.divide(totalWeight, 2, RoundingMode.HALF_UP).toString();
+//            finalScores.put(studentID, finalScore);
+//            finalGrades.add(finalScore);
         }
         System.out.println(finalGrades);
         return finalGrades;
@@ -339,10 +393,13 @@ public class Course {
         }
     }
 
-//    public Gradable findAssignmentByName(String assignmentName, String categoryName){
-//        GradableDAO gdb = new GradableDB();
-//        try{
-//            gdb.
-//        }
-//    }
+    public Gradable findAssignmentByName(String assignmentName, String categoryName){
+        GradableDAO gdb = new GradableDB();
+        try{
+            return gdb.findOneGradableByCategoryNameAndGradableName(courseID, assignmentName, categoryName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
