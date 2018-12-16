@@ -111,6 +111,7 @@ public class MainUI extends Application {
                             Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
                             cb1.setText(tagList.get(i).getTname());
+
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
