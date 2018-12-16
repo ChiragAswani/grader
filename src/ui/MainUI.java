@@ -38,6 +38,7 @@ import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class MainUI extends Application {
 //                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
 //                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
                         BigDecimal totalScore = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore();
-                        String tP = totalScore.setScale(2).toString();
+                        String tP = prettyString(totalScore);
                         totalPoints.setText(tP);
 
                         final TextField pointsMissed = new TextField();
@@ -317,7 +318,7 @@ public class MainUI extends Application {
                             row.add("");
                         }
                         else{
-                            row.add(score.stripTrailingZeros().toPlainString() +"/"+total.stripTrailingZeros().toPlainString());
+                            row.add(prettyString(score) +"/"+prettyString(total));
                         }
                     }
                     for (int i=0; i<gradableList.size()-gradeList.size(); i++){
@@ -656,6 +657,8 @@ public class MainUI extends Application {
                 grid.add(new Label("Edit How many points in this assignment out of?"), 0, 1);
                 grid.add(addMaxScore, 1, 1);
 
+                Gradable gradable = course.findAssignmentByName(assignmentName, gC.getText());
+
 
                 dialog.getDialogPane().setContent(grid);
 
@@ -669,21 +672,19 @@ public class MainUI extends Application {
                         System.out.println("Maximum Score cannot be empty");
                     } else {
 
-                        int maxScore = (int) Double.parseDouble(addMaxScore.getText());
-                        for (Person student : students) {
-                            student.addAssignment(gC.getText(), assignmentName, maxScore);
-                        }
+                        BigDecimal maxScore = new BigDecimal(Double.parseDouble(addMaxScore.getText()));
 
-                        Button newAssignment = buildEditAssignmentButton(addAssignmentName.getText(), BigDecimal.valueOf(maxScore) , ugradWeight, gradWeight, gC, section);
+
+                        gradable.setAssignmentName(addAssignmentName.getText());
+                        gradable.setMaxScore(maxScore);
+                        gradable.saveGradable();
+
+                        Button newAssignment = buildEditAssignmentButton(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, gC, section);
                         section.setGraphic(newAssignment);
 
                         renderTable(currentStage);
-
-
-
                     }
                 }
-
             }
         });
         return editAssignment;
@@ -710,6 +711,10 @@ public class MainUI extends Application {
             e.printStackTrace();
         }
 
+    }
+
+    public String prettyString(BigDecimal value){
+        return value.setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
 }

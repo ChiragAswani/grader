@@ -1,5 +1,8 @@
 package grades;
 
+import DAO.GradableDAO;
+import database.GradableDB;
+
 import java.math.BigDecimal;
 
 public class Gradable {
@@ -97,5 +100,19 @@ public class Gradable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void saveGradable(){
+        System.out.println("Updating Gradable");
+        System.out.println("Name: "+assignmentName);
+        System.out.println("Score: "+maxScore);
+        System.out.println("gid: "+gID);
+        GradableDAO gdb = new GradableDB();
+        try{
+            gdb.updateGradable(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
