@@ -86,6 +86,8 @@ public class StudentDB extends DBconn implements StudentDAO {
         if (!checkStudentInDB(s)){
             System.out.println("insert student");
             insertStudent(s);
+        }else{
+            updateStudent(s);
         }
         String sql="INSERT INTO register(studentid,courseid,customized) values(?,?,?)";
         PreparedStatement stmt=conn.prepareStatement(sql);
