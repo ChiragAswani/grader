@@ -1,9 +1,12 @@
 package ui;
 
+import DAO.GradableDAO;
+import DAO.GradeDAO;
 import Student.Student;
 import com.sun.tools.javac.Main;
 import core.Course;
 import core.Home;
+import database.GradeDB;
 import grades.Category;
 import grades.Gradable;
 import grades.Grade;
@@ -88,11 +91,34 @@ public class MainUI extends Application {
 
 //                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
 //                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
-                        BigDecimal totalScore = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore();
+
+                        Gradable assignment =  course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
+                        BigDecimal totalScore = assignment.getMaxScore();
                         String tP = prettyString(totalScore);
                         totalPoints.setText(tP);
 
+
+                        int row = cell.getIndex();
+                        data2.get(row);
+                        String studentId = data2.get(row).get(2).toString();
+                        int gradableId = assignment.getgID();
+                        GradeDAO gdb=new GradeDB();
+                        Grade grade=null;
+                        try{
+                            grade=gdb.findOneGrade(studentId,gradableId);
+                        }catch (Exception err){
+                            err.printStackTrace();
+                        }
+
+
+
+
                         final TextField pointsMissed = new TextField();
+                        if (grade!=null && grade.getScore().intValue()>-1){
+                            BigDecimal showScore=grade.getTotalScore(course.getCourseID());
+                            showScore=showScore.subtract(grade.getScore());
+                            pointsMissed.setText(showScore.toString());
+                        }
                         pointsMissed.setPromptText("i.e 7");
 
 
@@ -106,6 +132,8 @@ public class MainUI extends Application {
                         grid.add(new Label("Points Missed"), 0, 3);
                         grid.add(pointsMissed, 1, 3);
 
+
+
                         Home h = new Home();
                         List<Tag> selectedTags = new ArrayList<Tag>();
                         List<Tag> tagList =  h.getAllTag();
@@ -115,7 +143,18 @@ public class MainUI extends Application {
                             Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
                             cb1.setText(tagList.get(i).getTname());
-
+                            boolean hasTag=false;
+                            for (Tag t: grade.gettList()){
+                                if (tagObj.gettID()==t.gettID()){
+                                    hasTag=true;
+                                }
+                            }
+                            if (hasTag){
+                                cb1.setSelected(true);
+                                selectedTags.add(tagObj);
+                            }else{
+                                cb1.setSelected(false);
+                            }
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
@@ -141,9 +180,7 @@ public class MainUI extends Application {
 
                             double computedValue =  Double.parseDouble(tP) - Double.parseDouble(pointsMissed.getText());
 
-                            int row = cell.getIndex();
-                            data2.get(row);
-                            course.editGrade(String.valueOf(data2.get(row).get(2)),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
+                            course.editGrade(String.valueOf(studentId),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
                             System.out.println("Editing row: "+data2.get(row));
                             e.consume();
                             renderTable(currentStage);
@@ -787,10 +824,10 @@ public class MainUI extends Application {
                 String assignmentName = assignmentsInCategory.get(assignmentCounter).getAssignmentName();
 
                 BigDecimal assignmentGrade = gradeInAssignment.get(assignmentCounter).getScore();
-
+                String totalScore = prettyString(assignmentGrade) + "/" + prettyString(assignmentsInCategory.get(assignmentCounter).getMaxScore());
 
                 grid.add(new Label(assignmentName + ":"), 0, rowIndex);
-                grid.add(new Text(prettyString(assignmentGrade)), 1, rowIndex);
+                grid.add(new Text(totalScore), 1, rowIndex);
                 rowIndex++;
             }
         }
