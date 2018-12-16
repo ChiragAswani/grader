@@ -195,6 +195,13 @@ public class Course {
         try{
             Gradable builtGradable = gdb.addGradableToOneCourse(newGradable);
             gradableList.add(builtGradable);
+            for (Student s: studentList){
+                if (s.getType()=="grad"){
+                    s.addGrade(builtGradable.getgID(),builtGradable.getWeight_grad());
+                }else{
+                    s.addGrade(builtGradable.getgID(),builtGradable.getWeight_ungrad());
+                }
+            }
             return  builtGradable.getgID();
         }
         catch (Exception e){
