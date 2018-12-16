@@ -4,8 +4,11 @@ import Student.Student;
 import core.Course;
 import core.Home;
 import grades.Gradable;
+import grades.Grade;
 import grades.Tag;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -28,13 +31,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
-import javax.swing.text.html.ImageView;
-import java.awt.*;
-import java.io.FileInputStream;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
@@ -43,11 +43,15 @@ import java.util.List;
 public class MainUI extends Application {
 
     private TableView<Person> table = new TableView<Person>();
-    private final ObservableList<Person> data =
+    private ObservableList<Person> data =
             FXCollections.observableArrayList();
+
+    private TableView table2;
+    private ObservableList<ObservableList> data2;
     private List<Person> students = new ArrayList<>();
     final HBox hb = new HBox();
     private Course course;
+
 
     Callback<TableColumn, TableCell> cellFactory =
             new Callback<TableColumn, TableCell>() {
@@ -118,10 +122,19 @@ public class MainUI extends Application {
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
 
-                            Integer computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
+                            int computedValue = Integer.parseInt(tP) - Integer.parseInt(pointsMissed.getText());
+
+                            int row = cell.getIndex();
+                            data2.get(row);
+                            course.editGrade(String.valueOf(data2.get(row).get(2)),p.getText(), BigDecimal.valueOf(computedValue), selectedTags);
+                            System.out.println("Editing row: "+data2.get(row));
+
                             cell.startEdit();
-                            cell.setText(computedValue.toString() + "/" + tP);
-                            cell.commitEdit(computedValue.toString() + "/" + tP);
+                            cell.setText(String.valueOf(computedValue) + "/" + tP);
+                            cell.commitEdit(String.valueOf(computedValue) + "/" + tP);
+
+                            data2.get(row);
+                            System.out.println("Finished editing row: "+data2.get(row));
 
                             e.consume();
                         }
@@ -169,49 +182,547 @@ public class MainUI extends Application {
     }
 
 
-    @Override
-    public void start(Stage stage) {
+//    @Override
+//    public void start(Stage stage) {
+//
+//        Scene scene = new Scene(new Group());
+//        stage.setTitle("Table View Sample");
+//        stage.setWidth(1000);
+//        stage.setHeight(1000);
+//
+//        final Label label = new Label(this.course.getCourseName());
+//        label.setFont(new Font("Arial", 20));
+//
+//        table.setEditable(true);
+//        table.setPrefWidth(800);
+//
+//
+//        TableColumn firstNameCol = new TableColumn("First Name");
+//        firstNameCol.setMinWidth(100);
+//        firstNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
+//
+//        TableColumn lastNameCol = new TableColumn("Last Name");
+//        lastNameCol.setMinWidth(100);
+//        lastNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("lastName"));
+//
+//        TableColumn BUIDCol = new TableColumn("BUID");
+//        BUIDCol.setMinWidth(100);
+//        BUIDCol.setCellValueFactory(new PropertyValueFactory<Person, String>("BUID"));
+//
+//        // Create the Delete Button and add Event-Handler
+//        Button deleteButton = new Button("Delete Selected Rows");
+//        deleteButton.setOnAction(new EventHandler<ActionEvent>()
+//        {
+//            @Override public void handle(ActionEvent e)
+//            {
+//                deletePerson();
+//            }
+//        });
+//
+//        table.setItems(data);
+//        table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol);
+//
+//        //Read in everything from database
+//        readInCourse();
+//
+//        final Button addStudent = new Button("Add A New Student");
+//        addStudent.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent e) {
+//                Dialog dialog = new Dialog();
+//                dialog.setTitle("Add a New Student");
+//                dialog.setHeaderText("Add a student to " + course.getCourseName());
+//
+//                ButtonType addStudentButton = new ButtonType("Add Student", ButtonBar.ButtonData.APPLY.OK_DONE);
+//                dialog.getDialogPane().getButtonTypes().addAll(addStudentButton, ButtonType.CANCEL);
+//
+//                GridPane grid = new GridPane();
+//                grid.setHgap(10);
+//                grid.setVgap(10);
+//                grid.setPadding(new Insets(20, 150, 10, 10));
+//
+//                final TextField addFirstName = new TextField();
+//                addFirstName.setPromptText("First Name");
+//
+//                final TextField addLastName = new TextField();
+//                addLastName.setPromptText("Last Name");
+//
+//                final TextField addBUID = new TextField();
+//                addBUID.setPromptText("BUID");
+//
+//                ObservableList<String> options =
+//                        FXCollections.observableArrayList("ugrad", "grad");
+//                final ComboBox comboBox = new ComboBox(options);
+//                comboBox.getSelectionModel().selectFirst();
+//
+//                grid.add(new Label("FirstName:"), 0, 0);
+//                grid.add(addFirstName, 1, 0);
+//                grid.add(new Label("LastName:"), 0, 1);
+//                grid.add(addLastName, 1, 1);
+//                grid.add(new Label("BUID:"), 0, 2);
+//                grid.add(addBUID, 1, 2);
+//                grid.add(new Label("Student Type:"), 0, 3);
+//                grid.add(comboBox, 1, 3);
+//
+//
+//                dialog.getDialogPane().setContent(grid);
+//
+//                Optional result = dialog.showAndWait();
+//
+//                if (result.isPresent()){
+//                    if (addFirstName.getText().length() == 0){
+//                        System.out.println("First Name cannot be empty");
+//                    }
+//                    else if (addLastName.getText().length() == 0){
+//                        System.out.println("Last Name cannot be empty");
+//                    }
+//                    else if (addBUID.getText().length() == 0){
+//                        System.out.println("BUID cannot be empty");
+//                    } else {
+//                        course.addStudent(addFirstName.getText(), addLastName.getText(), addBUID.getText(), 0, comboBox.getSelectionModel().getSelectedItem().toString());
+//                        Person newPerson = new Person(
+//                                addFirstName.getText(),
+//                                addLastName.getText(),
+//                                addBUID.getText(),
+//                                new ArrayList<>(),
+//                                comboBox.getSelectionModel().getSelectedItem().toString());
+////                        students.add(newPerson);
+//                        if (!students.isEmpty()){
+//                            Person masterStudent = students.get(0);
+//                            newPerson.setCategoryList(masterStudent.copyCategories());
+//                        }
+//                        students.add(newPerson);
+//
+//                        data.add(newPerson);
+//                        addFirstName.clear();
+//                        addLastName.clear();
+//                        addBUID.clear();
+//                    }
+//                }
+//            }
+//        });
+//
+//        final Button addGradingCategoryButton = new Button("Add a New Grading Category");
+//        addGradingCategoryButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent e) {
+//
+//                Dialog dialog = new Dialog();
+//                dialog.setTitle("Add A New Grading Category");
+//                dialog.setHeaderText("Add a New Grading Category (i.e. Homeworks)");
+//
+//                ButtonType addGradingCategory = new ButtonType("Add Grading Category", ButtonBar.ButtonData.APPLY.OK_DONE);
+//                dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
+//
+//                GridPane grid = new GridPane();
+//                grid.setHgap(10);
+//                grid.setVgap(10);
+//                grid.setPadding(new Insets(20, 150, 10, 10));
+//
+//                final TextField addGradingCategoryInput = new TextField();
+//                addGradingCategoryInput.setPromptText("Category Name");
+//
+//                final TextField underGraduateWeight = new TextField();
+//                underGraduateWeight.setPromptText("i.e 10");
+//
+//                final TextField graduateWeight = new TextField();
+//                graduateWeight.setPromptText("i.e 10");
+//
+//                final Text graduateWeightPercent = new Text();
+//                graduateWeightPercent.setText("%");
+//
+//                final Text undergraduateWeightPercent = new Text();
+//                undergraduateWeightPercent.setText("%");
+//
+//                grid.add(new Label("Grading Category"), 0, 0);
+//                grid.add(addGradingCategoryInput, 1, 0);
+//
+//                grid.add(new Label("Undergraduate Weight"), 0, 1);
+//                grid.add(underGraduateWeight, 1, 1);
+//                grid.add(undergraduateWeightPercent, 2, 1);
+//
+//                grid.add(new Label("Graduate Weight"), 0, 2);
+//                grid.add(graduateWeight, 1, 2);
+//                grid.add(graduateWeightPercent, 2, 2);
+//
+//                dialog.getDialogPane().setContent(grid);
+//
+//                Optional<String> result = dialog.showAndWait();
+//
+//                if (result.isPresent()){
+//                    String gradingCategory = addGradingCategoryInput.getText();
+//                    String uWeight = underGraduateWeight.getText();
+//                    String gWeight = graduateWeight.getText();
+//                    for (Person student : students) {
+//                        student.addCategory(gradingCategory, uWeight, gWeight);
+//                    }
+//
+//                    addNewGradingCategoryToTable(gradingCategory);
+//                    Home h = new Home();
+//
+//                    MainUI ui = new MainUI(h.loadCourse(String.valueOf(course.getCourseID())));
+//                    Stage a = new Stage();
+//                    ui.start(a);
+//                    saveState();
+//                    stage.close();
+//                }
+//            }
+//        });
+//
+//        hb.getChildren().addAll(addStudent, deleteButton);
+//        hb.setSpacing(3);
+//
+//
+//        final VBox vbox = new VBox();
+//        vbox.setSpacing(5);
+//        vbox.setPadding(new Insets(10, 0, 0, 10));
+//
+//        Button goBackButton = new Button("Go Back To Course Selection");
+//        goBackButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override public void handle(ActionEvent e) {
+//                stage.close();
+//                Dashboard dashboard = new Dashboard();
+//                Stage a = new Stage();
+//                try{
+//                    dashboard.start(a);
+//                } catch (Exception err){
+//                    System.out.println(err);
+//                }
+//            }
+//        });
+//
+//
+//        vbox.getChildren().addAll(label, addGradingCategoryButton, table, hb, goBackButton);
+//
+//        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+//
+//        stage.setScene(scene);
+//        stage.show();
+//
+//
+//        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
+//        tsm.setSelectionMode(SelectionMode.MULTIPLE);
+//
+//    }
 
+    public void saveState(){
+        System.out.println("Saving state");
+
+        ObservableList<TableColumn> columns = table2.getColumns();
+        ArrayList<String> values = new ArrayList<>();
+
+        for (Object row : table2.getItems()) {
+            for (TableColumn column : columns) {
+                System.out.println(column);
+                System.out.println((String) column.
+                        getCellObservableValue(row).getValue());
+
+                values.add(
+                        (String) column.
+                                getCellObservableValue(row).getValue());
+            }
+        }
+        System.out.println(values);
+
+//        for (TableColumn column : table2.getColumns()) {
+//            column
+//        }
+
+//        System.out.println(table2.getColumns());
+
+
+//        for (Person student : students) {
+//            System.out.println(student.firstName);
+//            course.addStudent(student.BUID, student.firstName, student.lastName, 0, student.type);
+//            for (Category category : student.categoryList) {
+//                for (Assignment assignment : category.assignmentList) {
+//                    BigDecimal score =  BigDecimal.valueOf((double) assignment.score);
+//                    BigDecimal total =  BigDecimal.valueOf((double) assignment.totalPoints);
+//                    BigDecimal gradWeight = BigDecimal.valueOf(Double.parseDouble(category.gradWeight));
+//                    BigDecimal ugradWeight = BigDecimal.valueOf(Double.parseDouble(category.ugradWeight));
+//                    System.out.println(assignment.name);
+//                    course.addGradable(assignment.name, total, ugradWeight, gradWeight, 0, category.categoryName);
+//                    course.editGrade(student.BUID, assignment.name, score, assignment.tags);
+//                }
+//
+//            }
+//
+//        }
+
+
+
+    }
+
+    public void readInCourse(){
+        HashMap<String, ArrayList<Gradable>> categories = new HashMap<>();
+        for (Gradable gradable : course.getGradableList()) {
+            String currentCategory = gradable.getType();
+            if(!categories.containsKey(currentCategory)){
+                ArrayList<Gradable> grads = new ArrayList<>();
+                grads.add(gradable);
+                categories.put(currentCategory, grads);
+            }
+            else{
+                ArrayList<Gradable> grads = categories.get(currentCategory);
+                grads.add(gradable);
+                categories.put(currentCategory, grads);
+            }
+        }
+
+
+        for (Student student : course.getStudentList()) {
+            Person newPerson = new Person(
+                    student.getFirstName(),
+                    student.getLastName(),
+                    student.getStudentID(),
+                    new ArrayList<>(),
+                    student.getType());
+            students.add(newPerson);
+            data.add(newPerson);
+        }
+    }
+
+    public TableColumn addNewGradingCategoryToTable( String gradingCategory){
+
+        TableColumn gC = new TableColumn(gradingCategory);
+        gC.setMinWidth(100);
+        gC.setCellValueFactory(new PropertyValueFactory<GradingCategory, String>(gradingCategory));
+        Button addAssignmentButton = buildAddGradableColumn(gC);
+
+        gC.setGraphic(addAssignmentButton);
+        table2.getColumns().addAll(gC);
+
+        return gC;
+    }
+
+    public void addNewGradable(String assignmentName, BigDecimal maxScore , BigDecimal ugradWeight, BigDecimal gradWeight, TableColumn gC){
+        TableColumn section = new TableColumn();
+        section.setCellValueFactory(new PropertyValueFactory<Person, String>("test"));
+        section.setMinWidth(100);
+        section.setCellFactory(cellFactory);
+        section.setOnEditCommit(
+                new EventHandler<CellEditEvent<Person, String>>() {
+                    @Override
+                    public void handle(CellEditEvent<Person, String> t) {
+                        System.out.println(t.getNewValue());
+                    }
+                }
+        );
+        Button editAssignmentButton = buildEditAssignmentButton(assignmentName, maxScore, ugradWeight, gradWeight, gC, section);
+
+        section.setGraphic(editAssignmentButton);
+        gC.getColumns().addAll(section);
+
+    }
+        //Update Table
+        public void buildData() {
+            data2 = FXCollections.observableArrayList();
+            ObservableList<String> studentList = FXCollections.observableArrayList();
+            List<Gradable> gradableList = course.getGradableList();
+            try {
+
+                /**
+                 * ********************************
+                 * TABLE COLUMN ADDED DYNAMICALLY *
+                 *********************************
+                 */
+                TableColumn column1 = new TableColumn("First Name");
+                column1.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(0).toString());
+                    }
+                });
+
+                table2.getColumns().addAll(column1);
+                System.out.println("Column [" + 0 + "] ");
+
+                TableColumn column2 = new TableColumn("Last Name");
+                column2.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(1).toString());
+                    }
+                });
+
+                table2.getColumns().addAll(column2);
+                System.out.println("Column [" + 1 + "] ");
+
+                TableColumn column3 = new TableColumn("BUID");
+                column3.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(2).toString());
+                    }
+                });
+
+                table2.getColumns().addAll(column3);
+                System.out.println("Column [" + 2 + "] ");
+
+
+                for (int i=0; i<gradableList.size(); i++) {
+                    final int j=i+3;
+                    TableColumn column = new TableColumn(gradableList.get(i).getAssignmentName());
+                    column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                        public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                            return new SimpleStringProperty(param.getValue().get(j).toString());
+                        }
+                    });
+
+                    table2.getColumns().addAll(column);
+                    System.out.println("Column [" + i + "] ");
+                }
+
+
+                /**
+                 * ******************************
+                 * Data added to ObservableList *
+                 *******************************
+                 */
+                for (Student student : course.getStudentList()) {
+                    ObservableList<String> row = FXCollections.observableArrayList();
+                    row.add(student.getFirstName());
+                    row.add(student.getLastName());
+                    row.add(student.getStudentID());
+                    List<Grade> gradeList = student.getGradeList();
+                    for (int i=0; i<gradeList.size(); i++){
+                        row.add(String.valueOf(gradeList.get(i).getScore()));
+                    }
+
+                    System.out.println("Row [1] added " + row);
+                    data2.add(row);
+
+                }
+
+
+                //FINALLY ADDED TO TableView
+                table2.setItems(data2);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error on Building Data");
+            }
+        }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        //TableView
+        table2 = new TableView();
+        buildData();
+
+        Button newStudentButton = buildNewStudentButton();
+        Button newCategoryButton = builddNewColumnButton();
+
+        //Main Scene
         Scene scene = new Scene(new Group());
         stage.setTitle("Table View Sample");
         stage.setWidth(1000);
         stage.setHeight(1000);
 
-        final Label label = new Label(this.course.getCourseName());
-        label.setFont(new Font("Arial", 20));
-
-        table.setEditable(true);
-        table.setPrefWidth(800);
 
 
-        TableColumn firstNameCol = new TableColumn("First Name");
-        firstNameCol.setMinWidth(100);
-        firstNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
+        hb.getChildren().addAll(newStudentButton);
+        hb.setSpacing(3);
 
-        TableColumn lastNameCol = new TableColumn("Last Name");
-        lastNameCol.setMinWidth(100);
-        lastNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("lastName"));
 
-        TableColumn BUIDCol = new TableColumn("BUID");
-        BUIDCol.setMinWidth(100);
-        BUIDCol.setCellValueFactory(new PropertyValueFactory<Person, String>("BUID"));
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 0, 0, 10));
 
-        // Create the Delete Button and add Event-Handler
-        Button deleteButton = new Button("Delete Selected Rows");
-        deleteButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override public void handle(ActionEvent e)
-            {
-                deletePerson();
+        Button goBackButton = new Button("Go Back To Course Selection");
+        goBackButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                stage.close();
+                Dashboard dashboard = new Dashboard();
+                Stage a = new Stage();
+                try{
+                    dashboard.start(a);
+                } catch (Exception err){
+                    System.out.println(err);
+                }
             }
         });
 
-        table.setItems(data);
-        table.getColumns().addAll(firstNameCol, lastNameCol, BUIDCol);
+        final Label label = new Label(this.course.getCourseName());
+        label.setFont(new Font("Arial", 20));
 
-        //Read in everything from database
-        readInCourse();
+        vbox.getChildren().addAll(label,newCategoryButton, table2, hb, goBackButton);
 
+        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        stage.setScene(scene);
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        stage.show();
+    }
+
+    public Button builddNewColumnButton(){
+        final Button addGradingCategoryButton = new Button("Add a New Grading Category");
+        addGradingCategoryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+
+                Dialog dialog = new Dialog();
+                dialog.setTitle("Add A New Grading Category");
+                dialog.setHeaderText("Add a New Grading Category (i.e. Homeworks)");
+
+                ButtonType addGradingCategory = new ButtonType("Add Grading Category", ButtonBar.ButtonData.APPLY.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
+
+                GridPane grid = new GridPane();
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.setPadding(new Insets(20, 150, 10, 10));
+
+                final TextField addGradingCategoryInput = new TextField();
+                addGradingCategoryInput.setPromptText("Category Name");
+
+                final TextField underGraduateWeight = new TextField();
+                underGraduateWeight.setPromptText("i.e 10");
+
+                final TextField graduateWeight = new TextField();
+                graduateWeight.setPromptText("i.e 10");
+
+                final Text graduateWeightPercent = new Text();
+                graduateWeightPercent.setText("%");
+
+                final Text undergraduateWeightPercent = new Text();
+                undergraduateWeightPercent.setText("%");
+
+                grid.add(new Label("Grading Category"), 0, 0);
+                grid.add(addGradingCategoryInput, 1, 0);
+
+                grid.add(new Label("Undergraduate Weight"), 0, 1);
+                grid.add(underGraduateWeight, 1, 1);
+                grid.add(undergraduateWeightPercent, 2, 1);
+
+                grid.add(new Label("Graduate Weight"), 0, 2);
+                grid.add(graduateWeight, 1, 2);
+                grid.add(graduateWeightPercent, 2, 2);
+
+                dialog.getDialogPane().setContent(grid);
+
+                Optional<String> result = dialog.showAndWait();
+
+                if (result.isPresent()){
+                    String gradingCategory = addGradingCategoryInput.getText();
+                    String uWeight = underGraduateWeight.getText();
+                    String gWeight = graduateWeight.getText();
+                    for (Person student : students) {
+                        student.addCategory(gradingCategory, uWeight, gWeight);
+                    }
+
+                    addNewGradingCategoryToTable(gradingCategory);
+                }
+            }
+        });
+        return addGradingCategoryButton;
+    }
+
+    public Button buildNewStudentButton(){
         final Button addStudent = new Button("Add A New Student");
         addStudent.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -278,179 +789,32 @@ public class MainUI extends Application {
                             Person masterStudent = students.get(0);
                             newPerson.setCategoryList(masterStudent.copyCategories());
                         }
+                        saveState();
+
+                        ObservableList<String> row = FXCollections.observableArrayList();
+                        row.add(newPerson.firstName);
+                        row.add(newPerson.lastName);
+                        row.add(newPerson.BUID);
+                        System.out.println("New Row added " + row);
+                        data2.add(row);
+
+
                         students.add(newPerson);
 
                         data.add(newPerson);
                         addFirstName.clear();
                         addLastName.clear();
                         addBUID.clear();
+
+
                     }
                 }
             }
         });
-
-        final Button addGradingCategoryButton = new Button("Add a New Grading Category");
-        addGradingCategoryButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-
-                Dialog dialog = new Dialog();
-                dialog.setTitle("Add A New Grading Category");
-                dialog.setHeaderText("Add a New Grading Category (i.e. Homeworks)");
-
-                ButtonType addGradingCategory = new ButtonType("Add Grading Category", ButtonBar.ButtonData.APPLY.OK_DONE);
-                dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
-
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 150, 10, 10));
-
-                final TextField addGradingCategoryInput = new TextField();
-                addGradingCategoryInput.setPromptText("Category Name");
-
-                final TextField underGraduateWeight = new TextField();
-                underGraduateWeight.setPromptText("i.e 10");
-
-                final TextField graduateWeight = new TextField();
-                graduateWeight.setPromptText("i.e 10");
-
-                final Text graduateWeightPercent = new Text();
-                graduateWeightPercent.setText("%");
-
-                final Text undergraduateWeightPercent = new Text();
-                undergraduateWeightPercent.setText("%");
-
-                grid.add(new Label("Grading Category"), 0, 0);
-                grid.add(addGradingCategoryInput, 1, 0);
-
-                grid.add(new Label("Undergraduate Weight"), 0, 1);
-                grid.add(underGraduateWeight, 1, 1);
-                grid.add(undergraduateWeightPercent, 2, 1);
-
-                grid.add(new Label("Graduate Weight"), 0, 2);
-                grid.add(graduateWeight, 1, 2);
-                grid.add(graduateWeightPercent, 2, 2);
-
-                dialog.getDialogPane().setContent(grid);
-
-                Optional<String> result = dialog.showAndWait();
-
-                if (result.isPresent()){
-                    String gradingCategory = addGradingCategoryInput.getText();
-                    String uWeight = underGraduateWeight.getText();
-                    String gWeight = graduateWeight.getText();
-                    for (Person student : students) {
-                        student.addCategory(gradingCategory, uWeight, gWeight);
-                    }
-
-                    addNewGradingCategoryToTable(gradingCategory);
-                    Home h = new Home();
-
-                    MainUI ui = new MainUI(h.loadCourse(String.valueOf(course.getCourseID())));
-                    Stage a = new Stage();
-                    ui.start(a);
-                    saveState();
-                    stage.close();
-                }
-            }
-        });
-
-        hb.getChildren().addAll(addStudent, deleteButton);
-        hb.setSpacing(3);
-
-
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-
-        Button goBackButton = new Button("Go Back To Course Selection");
-        goBackButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                stage.close();
-                Dashboard dashboard = new Dashboard();
-                Stage a = new Stage();
-                try{
-                    dashboard.start(a);
-                } catch (Exception err){
-                    System.out.println(err);
-                }
-            }
-        });
-
-
-        vbox.getChildren().addAll(label, addGradingCategoryButton, table, hb, goBackButton);
-
-        ((Group) scene.getRoot()).getChildren().addAll(vbox);
-
-        stage.setScene(scene);
-        stage.show();
-
-
-        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
-        tsm.setSelectionMode(SelectionMode.MULTIPLE);
-
+        return addStudent;
     }
 
-    public void saveState(){
-        System.out.println("Saving state");
-        for (Person student : students) {
-            System.out.println(student.firstName);
-            course.addStudent(student.BUID, student.firstName, student.lastName, 0, student.type);
-            for (Category category : student.categoryList) {
-                for (Assignment assignment : category.assignmentList) {
-                    BigDecimal score =  BigDecimal.valueOf((double) assignment.score);
-                    BigDecimal total =  BigDecimal.valueOf((double) assignment.totalPoints);
-                    BigDecimal gradWeight = BigDecimal.valueOf(Double.parseDouble(category.gradWeight));
-                    BigDecimal ugradWeight = BigDecimal.valueOf(Double.parseDouble(category.ugradWeight));
-                    System.out.println(assignment.name);
-                    course.addGradable(assignment.name, total, ugradWeight, gradWeight, 0, category.categoryName);
-                    course.editGrade(student.BUID, assignment.name, score, assignment.tags);
-                }
-
-            }
-
-        }
-
-
-
-    }
-
-    public void readInCourse(){
-        HashMap<String, ArrayList<Gradable>> categories = new HashMap<>();
-        for (Gradable gradable : course.getGradableList()) {
-            String currentCategory = gradable.getType();
-            if(!categories.containsKey(currentCategory)){
-                ArrayList<Gradable> grads = new ArrayList<>();
-                grads.add(gradable);
-                categories.put(currentCategory, grads);
-            }
-            else{
-                ArrayList<Gradable> grads = categories.get(currentCategory);
-                grads.add(gradable);
-                categories.put(currentCategory, grads);
-            }
-        }
-
-
-        for (Student student : course.getStudentList()) {
-            Person newPerson = new Person(
-                    student.getFirstName(),
-                    student.getLastName(),
-                    student.getStudentID(),
-                    new ArrayList<>(),
-                    student.getType());
-            students.add(newPerson);
-            data.add(newPerson);
-        }
-    }
-
-    public TableColumn addNewGradingCategoryToTable( String gradingCategory){
-
-        TableColumn gC = new TableColumn(gradingCategory);
-        gC.setMinWidth(100);
-        gC.setCellValueFactory(new PropertyValueFactory<GradingCategory, String>(gradingCategory));
-
+    public Button buildAddGradableColumn(TableColumn gC){
         Button addAssignment = new Button("+");
         addAssignment.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -524,26 +888,10 @@ public class MainUI extends Application {
 
             }
         });
-        gC.setGraphic(addAssignment);
-        table.getColumns().addAll(gC);
-
-        return gC;
-
+        return addAssignment;
     }
 
-    public void addNewGradable(String assignmentName, BigDecimal maxScore , BigDecimal ugradWeight, BigDecimal gradWeight, TableColumn gC){
-        TableColumn section = new TableColumn();
-        section.setCellValueFactory(new PropertyValueFactory<Person, String>("test"));
-        section.setMinWidth(100);
-        section.setCellFactory(cellFactory);
-        section.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        System.out.println(t.getNewValue());
-                    }
-                }
-        );
+    public Button buildEditAssignmentButton(String assignmentName, BigDecimal maxScore , BigDecimal ugradWeight, BigDecimal gradWeight, TableColumn gC, TableColumn section){
         Button editAssignment = new Button(assignmentName);
         editAssignment.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -626,8 +974,6 @@ public class MainUI extends Application {
 
             }
         });
-        section.setGraphic(editAssignment);
-        gC.getColumns().addAll(section);
-
+        return editAssignment;
     }
 }

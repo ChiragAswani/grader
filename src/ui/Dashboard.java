@@ -95,7 +95,11 @@ public class Dashboard extends Application {
                         stage.close();
                         MainUI ui = new MainUI(h.loadCourse(courseID));
                         Stage a = new Stage();
-                        ui.start(a);
+                        try {
+                            ui.start(a);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
 
 
                     }
@@ -217,7 +221,11 @@ public class Dashboard extends Application {
             @Override public void handle(ActionEvent e) {
                 MainUI ui = new MainUI(h.createNewCourse(createANewCourseTextField.getText()));
                 Stage a = new Stage();
-                ui.start(a);
+                try {
+                    ui.start(a);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 stage.close();
             }
         });
