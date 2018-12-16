@@ -16,6 +16,7 @@ import grades.Tag;
 import ui.Actions;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -273,9 +274,10 @@ public class Course {
     }
 
 
-    public HashMap<String, String> calculateFinalGrades(){
+    public List<String> calculateFinalGrades(){
         GradeDAO gdb = new GradeDB();
         HashMap<String, String> finalScores = new HashMap<>();
+        List<String> finalGrades = new ArrayList<>();
         for (Student student : studentList) {
             BigDecimal totalWeight = new BigDecimal(0);
             BigDecimal totalScore = new BigDecimal(0);
@@ -283,6 +285,9 @@ public class Course {
                try{
                    Grade studentGrade = gdb.findOneGrade(student.getStudentID(), gradable.getgID());
                    BigDecimal studentScore = studentGrade.getScore();
+                   if(studentScore.intValue() == -1){
+                       continue;
+                   }
                    BigDecimal weight = student.getType() == "grad" ? gradable.getWeight_grad() : gradable.getWeight_ungrad();
                    totalWeight.add(weight);
                    totalScore.add(studentScore.multiply(weight));
@@ -290,12 +295,15 @@ public class Course {
                catch (Exception e){
                    e.printStackTrace();
                }
-               String studentID = student.getStudentID();
-               String finalScore = totalScore.divide(totalWeight).toString();
-               finalScores.put(studentID, finalScore);
+
             }
+            String studentID = student.getStudentID();
+            String finalScore = totalScore.divide(totalWeight, 2, RoundingMode.HALF_UP).toString();
+            finalScores.put(studentID, finalScore);
+            finalGrades.add(finalScore);
         }
-        return finalScores;
+        System.out.println(finalGrades);
+        return finalGrades;
     }
 
     public int findStudentIndex(String studentID) {
@@ -316,4 +324,25 @@ public class Course {
         }
         return -1;
     }
+
+    public void refreshEverything(){
+        CategoryDAO cdb = new CategoryDB();
+        GradableDAO gdb = new GradableDB();
+        StudentDAO sdb = new StudentDB();
+        try{
+            this.categoryList = cdb.findAllCategoryInOneCourse(courseID);
+            this.gradableList = gdb.findAllGradableInCourse(courseID);
+            this.studentList = sdb.findAllStudentInCourse(courseID);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public Gradable findAssignmentByName(String assignmentName, String categoryName){
+//        GradableDAO gdb = new GradableDB();
+//        try{
+//            gdb.
+//        }
+//    }
 }
