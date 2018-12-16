@@ -1,9 +1,12 @@
 package ui;
 
+import DAO.GradableDAO;
+import DAO.GradeDAO;
 import Student.Student;
 import com.sun.tools.javac.Main;
 import core.Course;
 import core.Home;
+import database.GradeDB;
 import grades.Category;
 import grades.Gradable;
 import grades.Grade;
@@ -93,7 +96,28 @@ public class MainUI extends Application {
                         String tP = prettyString(totalScore);
                         totalPoints.setText(tP);
 
+
+                        int row = cell.getIndex();
+                        data2.get(row);
+                        String studentId = data2.get(row).get(2).toString();
+                        int gradableId = assignment.getgID();
+                        GradeDAO gdb=new GradeDB();
+                        Grade grade=null;
+                        try{
+                            grade=gdb.findOneGrade(studentId,gradableId);
+                        }catch (Exception err){
+                            err.printStackTrace();
+                        }
+
+
+
+
                         final TextField pointsMissed = new TextField();
+                        if (grade!=null && grade.getScore().intValue()>-1){
+                            BigDecimal showScore=grade.getTotalScore(course.getCourseID());
+                            showScore=showScore.subtract(grade.getScore());
+                            pointsMissed.setText(showScore.toString());
+                        }
                         pointsMissed.setPromptText("i.e 7");
 
 
@@ -107,10 +131,7 @@ public class MainUI extends Application {
                         grid.add(new Label("Points Missed"), 0, 3);
                         grid.add(pointsMissed, 1, 3);
 
-                        int row = cell.getIndex();
-                        data2.get(row);
-                        String studentId = data2.get(row).get(2).toString();
-                        int gradableId = assignment.getgID();
+
 
                         Home h = new Home();
                         List<Tag> selectedTags = new ArrayList<Tag>();
@@ -121,7 +142,18 @@ public class MainUI extends Application {
                             Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
                             cb1.setText(tagList.get(i).getTname());
-
+                            boolean hasTag=false;
+                            for (Tag t: grade.gettList()){
+                                if (tagObj.gettID()==t.gettID()){
+                                    hasTag=true;
+                                }
+                            }
+                            if (hasTag){
+                                cb1.setSelected(true);
+                                selectedTags.add(tagObj);
+                            }else{
+                                cb1.setSelected(false);
+                            }
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
