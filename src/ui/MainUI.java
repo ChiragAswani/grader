@@ -147,9 +147,7 @@ public class MainUI extends Application {
 
                             double computedValue =  Double.parseDouble(tP) - Double.parseDouble(pointsMissed.getText());
 
-                            int row = cell.getIndex();
-                            data2.get(row);
-                            course.editGrade(String.valueOf(data2.get(row).get(2)),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
+                            course.editGrade(String.valueOf(studentId),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
                             System.out.println("Editing row: "+data2.get(row));
                             e.consume();
                             renderTable(currentStage);
