@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import utils.Utils;
 
 import java.util.Optional;
 
@@ -32,10 +33,7 @@ public class Login extends Application {
         ButtonType enterGradingPortal = new ButtonType("Enter Grading Portal", ButtonBar.ButtonData.APPLY.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(enterGradingPortal, ButtonType.CANCEL);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        GridPane grid = Utils.buildGridPane();
 
 
         grid.add(new Label("Password: "), 0, 0);

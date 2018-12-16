@@ -1,7 +1,6 @@
 package ui;
 
 import Student.Student;
-import com.sun.tools.javac.Main;
 import core.Course;
 import core.Home;
 import grades.Category;
@@ -19,7 +18,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -37,9 +35,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import utils.SessionManagementUtils;
+import utils.Utils;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.List;
 
@@ -69,7 +68,7 @@ public class MainUI extends Application {
                         }
                     };
                     cell.setOnMouseClicked(e -> {
-                        Dialog dialog = new Dialog();
+                        Dialog<String> dialog = new Dialog<String>();
                         dialog.setTitle("Add Grading Details");
                         Button n = (Button) p.getGraphic();
 
@@ -78,19 +77,13 @@ public class MainUI extends Application {
                         ButtonType addScore = new ButtonType("Add Score", ButtonBar.ButtonData.APPLY.OK_DONE);
                         dialog.getDialogPane().getButtonTypes().addAll(addScore, ButtonType.CANCEL);
 
-                        GridPane grid = new GridPane();
-                        grid.setHgap(10);
-                        grid.setVgap(10);
-                        grid.setPadding(new Insets(20, 150, 10, 10));
+                        GridPane grid = Utils.buildGridPane();
 
                         final Text totalPoints = new Text();
 
-//                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
-//                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
-
                         Gradable assignment =  course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
                         BigDecimal totalScore = assignment.getMaxScore();
-                        String tP = prettyString(totalScore);
+                        String tP = Utils.prettyString(totalScore);
                         totalPoints.setText(tP);
 
                         final TextField pointsMissed = new TextField();
@@ -150,7 +143,7 @@ public class MainUI extends Application {
                             course.editGrade(String.valueOf(studentId),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
                             System.out.println("Editing row: "+data2.get(row));
                             e.consume();
-                            renderTable(currentStage);
+                            SessionManagementUtils.renderTable(currentStage, course);
 
                         }
 
@@ -227,7 +220,7 @@ public class MainUI extends Application {
         gC.setGraphic(addAssignmentButton);
         table2.getColumns().addAll(gC);
 
-        renderTable(currentStage);
+        SessionManagementUtils.renderTable(currentStage, course);
 
         return gC;
     }
@@ -249,7 +242,7 @@ public class MainUI extends Application {
 
         course.addGradable(assignmentName, maxScore, ugradWeight, gradWeight, 0, gC.getText());
 
-        renderTable(currentStage);
+        SessionManagementUtils.renderTable(currentStage, course);
 
 //        section.setGraphic(editAssignmentButton);
 //        gC.getColumns().addAll(section);
@@ -346,7 +339,7 @@ public class MainUI extends Application {
                             row.add("");
                         }
                         else{
-                            row.add(prettyString(score) +"/"+prettyString(total));
+                            row.add(Utils.prettyString(score) +"/"+Utils.prettyString(total));
                         }
                     }
                     for (int i=0; i<gradableList.size()-gradeList.size(); i++){
@@ -382,7 +375,7 @@ public class MainUI extends Application {
         }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         //TableView
         table2 = new TableView();
         buildData();
@@ -410,14 +403,7 @@ public class MainUI extends Application {
         Button goBackButton = new Button("Go Back To Course Selection");
         goBackButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                currentStage.close();
-                Dashboard dashboard = new Dashboard();
-                Stage a = new Stage();
-                try{
-                    dashboard.start(a);
-                } catch (Exception err){
-                    System.out.println(err);
-                }
+                SessionManagementUtils.buildBackButton(currentStage);
             }
         });
 
@@ -440,23 +426,22 @@ public class MainUI extends Application {
         currentStage.show();
     }
 
+
+
     public Button buildNewColumnButton(){
         final Button addGradingCategoryButton = new Button("Add a New Grading Category");
         addGradingCategoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
 
-                Dialog dialog = new Dialog();
+                Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Add A New Grading Category");
                 dialog.setHeaderText("Add a New Grading Category (i.e. Homeworks)");
 
                 ButtonType addGradingCategory = new ButtonType("Add Grading Category", ButtonBar.ButtonData.APPLY.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
 
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 150, 10, 10));
+                GridPane grid = Utils.buildGridPane();
 
                 final TextField addGradingCategoryInput = new TextField();
                 addGradingCategoryInput.setPromptText("Category Name");
@@ -492,12 +477,9 @@ public class MainUI extends Application {
                     String gradingCategory = addGradingCategoryInput.getText();
                     String uWeight = underGraduateWeight.getText();
                     String gWeight = graduateWeight.getText();
-                    for (Person student : students) {
-                        student.addCategory(gradingCategory, uWeight, gWeight);
-                    }
                     course.addCategory(gradingCategory, BigDecimal.valueOf(Double.parseDouble(uWeight)), BigDecimal.valueOf(Double.parseDouble(gWeight)));
 
-//                    renderTable(currentStage);
+//                    SessionManagementUtils.renderTable(currentStage);
                     addNewGradingCategoryToTable(gradingCategory);
                 }
             }
@@ -517,10 +499,7 @@ public class MainUI extends Application {
                 ButtonType addStudentButton = new ButtonType("Add Student", ButtonBar.ButtonData.APPLY.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(addStudentButton, ButtonType.CANCEL);
 
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 150, 10, 10));
+                GridPane grid = Utils.buildGridPane();
 
                 final TextField addFirstName = new TextField();
                 addFirstName.setPromptText("First Name");
@@ -533,7 +512,7 @@ public class MainUI extends Application {
 
                 ObservableList<String> options =
                         FXCollections.observableArrayList("ugrad", "grad");
-                final ComboBox comboBox = new ComboBox(options);
+                final ComboBox<String> comboBox = new ComboBox<>(options);
                 comboBox.getSelectionModel().selectFirst();
 
                 grid.add(new Label("FirstName:"), 0, 0);
@@ -588,7 +567,7 @@ public class MainUI extends Application {
                         addFirstName.clear();
                         addLastName.clear();
                         addBUID.clear();
-                        renderTable(currentStage);
+                        SessionManagementUtils.renderTable(currentStage, course);
 
                     }
                 }
@@ -602,17 +581,14 @@ public class MainUI extends Application {
         addAssignment.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
 
-                Dialog dialog = new Dialog();
+                Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Add a Gradeable");
                 dialog.setHeaderText("Add a new assignment to: " + gC.getText());
 
                 ButtonType addAssignmentButton = new ButtonType("Add Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(addAssignmentButton, ButtonType.CANCEL);
 
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 150, 10, 10));
+                GridPane grid = Utils.buildGridPane();
 
                 final TextField addAssignmentName = new TextField();
                 addAssignmentName.setPromptText("i.e HW2");
@@ -659,16 +635,13 @@ public class MainUI extends Application {
         Button editAssignment = new Button(assignmentName);
         editAssignment.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                Dialog dialog = new Dialog();
+                Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Edit a Assignment");
                 dialog.setHeaderText("Editing Assignment: " + assignmentName);
                 ButtonType addAssignmentButton = new ButtonType("Edit Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(addAssignmentButton, ButtonType.CANCEL);
 
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 150, 10, 10));
+                GridPane grid = Utils.buildGridPane();
 
                 final TextField addAssignmentName = new TextField();
                 addAssignmentName.setPromptText("i.e HW2");
@@ -709,7 +682,7 @@ public class MainUI extends Application {
                         Button newAssignment = buildEditAssignmentButton(addAssignmentName.getText(), maxScore , ugradWeight, gradWeight, gC, section);
                         section.setGraphic(newAssignment);
 
-                        renderTable(currentStage);
+                        SessionManagementUtils.renderTable(currentStage, course);
                     }
                 }
             }
@@ -728,31 +701,11 @@ public class MainUI extends Application {
     }
 
 
-    public void renderTable(Stage stage){
-        MainUI newUI = new MainUI(course);
-        Stage a = new Stage();
-        try{
-            newUI.start(a);
-            stage.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public String prettyString(BigDecimal value) {
-        return value.setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
-    }
-
-
     public void displayFinalGradeInfo(String studentID){
-        Dialog dialog = new Dialog();
+        Dialog<String> dialog = new Dialog<String>();
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
         dialog.setHeaderText("Additional Information");
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        GridPane grid = Utils.buildGridPane();
 
         Student currentStudent = course.getStudentList().get(course.findStudentIndex(studentID));
 
@@ -790,7 +743,7 @@ public class MainUI extends Application {
                 String assignmentName = assignmentsInCategory.get(assignmentCounter).getAssignmentName();
 
                 BigDecimal assignmentGrade = gradeInAssignment.get(assignmentCounter).getScore();
-                String totalScore = prettyString(assignmentGrade) + "/" + prettyString(assignmentsInCategory.get(assignmentCounter).getMaxScore());
+                String totalScore = Utils.prettyString(assignmentGrade) + "/" + Utils.prettyString(assignmentsInCategory.get(assignmentCounter).getMaxScore());
 
                 grid.add(new Label(assignmentName + ":"), 0, rowIndex);
                 grid.add(new Text(totalScore), 1, rowIndex);

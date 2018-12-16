@@ -28,6 +28,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import utils.Utils;
 
 import javax.print.DocFlavor;
 import javax.xml.crypto.Data;
@@ -71,10 +72,7 @@ public class Dashboard extends Application {
         Home h = new Home();
         List<String[]> courses = h.seeUnArchivedCourses();
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        GridPane grid = Utils.buildGridPane();
         setCoursesTitle(grid);
         LocalDateTime now = LocalDateTime.now();
         Text header = new Text();
@@ -122,10 +120,7 @@ public class Dashboard extends Application {
                     ButtonType confirmRenameCourse = new ButtonType("Rename Course", ButtonBar.ButtonData.APPLY.OK_DONE);
                     d.getDialogPane().getButtonTypes().addAll(confirmRenameCourse, ButtonType.CANCEL);
 
-                    GridPane g = new GridPane();
-                    g.setHgap(10);
-                    g.setVgap(10);
-                    g.setPadding(new Insets(20, 150, 10, 10));
+                    GridPane g = Utils.buildGridPane();
 
                     final TextField newCourseName = new TextField();
                     newCourseName.setPromptText("Course Name");
@@ -276,10 +271,7 @@ public class Dashboard extends Application {
                 ButtonType confirmPassword = new ButtonType("Confirm Password", ButtonBar.ButtonData.APPLY.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(confirmPassword, ButtonType.CANCEL);
 
-                GridPane grid = new GridPane();
-                grid.setHgap(10);
-                grid.setVgap(10);
-                grid.setPadding(new Insets(20, 150, 10, 10));
+                GridPane grid = Utils.buildGridPane();
 
                 final TextField newPassword = new TextField();
                 newPassword.setPromptText("New Password");

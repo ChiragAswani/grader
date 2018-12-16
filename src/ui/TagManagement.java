@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import utils.Utils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -27,10 +28,7 @@ public class TagManagement extends Application {
         Home h = new Home();
         List<Tag> tagList =  h.getAllTag();
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        GridPane grid = Utils.buildGridPane();
 
         int i = 0;
 
