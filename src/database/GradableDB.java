@@ -9,6 +9,7 @@ import java.util.List;
 
 import DAO.GradableDAO;
 import DAO.GradeDAO;
+import grades.Category;
 import grades.Gradable;
 
 
@@ -63,6 +64,33 @@ public class GradableDB extends DBconn implements GradableDAO {
         }
         DBconn.closeAll(conn, stmt, rs);
         return gradableOut;
+    }
+
+    @Override
+    public List<Gradable> getAllGradableInOneCategory(Category c) throws Exception {
+        Connection conn=DBconn.getConnection();
+        String sql="select * from gradable g, distribution d, category c \n" +
+                "where g.gradableid=d.gradableid and c.categoryName=g.type and d.courseid= ? and c.categoryName=?";
+        PreparedStatement stmt= conn.prepareStatement(sql);
+        stmt.setInt(1,c.getCourseid());
+        stmt.setString(2,c.getCategoryName());
+        ResultSet rs=    stmt.executeQuery();
+        List<Gradable> GradableList=new ArrayList<Gradable>();
+        while(rs.next()) {
+            Gradable g=new Gradable(
+                    rs.getInt("courseid"),
+                    rs.getInt("gradableid"),
+                    rs.getString("gname"),
+                    rs.getBigDecimal("maxscore"),
+                    rs.getBigDecimal("weighting_undergraduate"),
+                    rs.getBigDecimal("weighting_graduate"),
+                    rs.getInt("customized"),
+                    rs.getString("type")
+            );
+            GradableList.add(g);
+        }
+        DBconn.closeAll(conn, stmt, rs);
+        return GradableList;
     }
 
     @Override
