@@ -1,5 +1,6 @@
 package DAO;
 
+import grades.Category;
 import grades.Gradable;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface GradableDAO {
     // delete a gradable. unlike removeGradableFromoneCourse. it will delete gradable in DB. So no course will have it any more.
     public void updateGradable(Gradable g)throws Exception;
     // update gradable.
+    public List<Gradable> getAllGradableInOneCategory(Category c) throws Exception;
+    // get
 }
