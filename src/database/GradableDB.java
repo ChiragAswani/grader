@@ -91,7 +91,6 @@ public class GradableDB extends DBconn implements GradableDAO {
         }
         DBconn.closeAll(conn, stmt, rs);
         return GradableList;
-
     }
 
     @Override
