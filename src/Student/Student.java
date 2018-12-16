@@ -96,6 +96,7 @@ public class Student {
     }
 
     public void editGrade(int gradableid,int index, BigDecimal newScore, List<Tag> tags){
+        System.out.println("Editing grade for student");
         gradeList.get(index).settList(tags);
         gradeList.get(index).setScore(newScore);
         GradeDAO gdb = new GradeDB();

@@ -150,7 +150,7 @@ public class HomeDB extends DBconn implements HomeDAO {
             stmt.execute();
             sql="CREATE TABLE `tag` (\n" +
                     "  `tagid` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                    "  `tname` varchar(45) DEFAULT NULL,\n" +
+                    "  `tname` varchar(45) DEFAULT NULL UNIQUE,\n" +
                     "  PRIMARY KEY (`tagid`)\n" +
                     ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;\n";
             stmt=newConn.prepareStatement(sql);

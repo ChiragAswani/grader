@@ -7,6 +7,7 @@ import database.CourseDB;
 import database.HomeDB;
 import database.TagDB;
 import grades.Tag;
+import ui.Actions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -157,9 +158,14 @@ public class Home {
             insertTag.setTname(tagName);
             tagDB.insertTag(insertTag);
         }catch(Exception e){
+            Actions action = new Actions();
+            action.triggerAlert("Error Message",
+                    "Database Error",
+                    "Tag name already exists in the database! Please create a new name for your tag");
             e.printStackTrace();
         }
     }
+
     public List<Tag> getAllTag(){
         TagDAO tagDB=new TagDB();
         try{

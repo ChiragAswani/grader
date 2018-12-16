@@ -5,6 +5,7 @@ import core.Home;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.Match;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -34,8 +35,11 @@ import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Dashboard extends Application {
+    Actions action = new Actions();
 
     public static void main(String[] args) {
         launch(args);
@@ -139,20 +143,19 @@ public class Dashboard extends Application {
 
                     Optional<String> result = d.showAndWait();
                     if (result.isPresent()){
-                        Course c = new Course();
-                        c.setCourseID(Integer.parseInt(courseID));
-                        c.setCourseName(newCourseName.getText());
-                        c.setArchived(0);
-                        h.updateCourse(c);
-
-                        Dashboard dashboard = new Dashboard();
-                        Stage a = new Stage();
-                        try{
-                            dashboard.start(a);
-                        } catch (Exception err){
-                            System.out.println(err);
+                        if (newCourseName.getText().trim().length() == 0){
+                            action.triggerAlert("Error Message",
+                                    "Invalid Course Name",
+                                    "Course name cannot be empty");
+                            action.goToDashBoard(stage);
+                        } else {
+                            Course c = new Course();
+                            c.setCourseID(Integer.parseInt(courseID));
+                            c.setCourseName(newCourseName.getText());
+                            c.setArchived(0);
+                            h.updateCourse(c);
+                            action.goToDashBoard(stage);
                         }
-
                     }
                 }
             });
@@ -167,15 +170,8 @@ public class Dashboard extends Application {
                     c.setCourseName(courseName);
                     c.setArchived(1);
                     h.updateCourse(c);
-
-                    stage.close();
-                    Dashboard dashboard = new Dashboard();
-                    Stage a = new Stage();
-                    try{
-                        dashboard.start(a);
-                    } catch (Exception err){
-                        System.out.println(err);
-                    }
+                    Actions action = new Actions();
+                    action.goToDashBoard(stage);
                 }
             });
             archiveCourse.setMaxWidth(Double.MAX_VALUE);
@@ -187,14 +183,8 @@ public class Dashboard extends Application {
                     Course c = new Course();
                     c.setCourseID(Integer.parseInt(courseID));
                     h.deleteCourse(c);
-                    stage.close();
-                    Dashboard dashboard = new Dashboard();
-                    Stage a = new Stage();
-                    try{
-                        dashboard.start(a);
-                    } catch (Exception err){
-                        System.out.println(err);
-                    }
+                    Actions action = new Actions();
+                    action.goToDashBoard(stage);
                 }
             });
             deleteCourse.setMaxWidth(Double.MAX_VALUE);
@@ -219,14 +209,22 @@ public class Dashboard extends Application {
         Button addCourseButton = new Button("Create");
         addCourseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                MainUI ui = new MainUI(h.createNewCourse(createANewCourseTextField.getText()));
-                Stage a = new Stage();
-                try {
-                    ui.start(a);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+
+                String courseName = createANewCourseTextField.getText();
+                if (courseName.trim().length() == 0){
+                    action.triggerAlert("Error Message",
+                            "Invalid Course Name",
+                            "Course name cannot be empty");
+                } else {
+                    stage.close();
+                    MainUI ui = new MainUI(h.createNewCourse(courseName));
+                    Stage a = new Stage();
+                    try {
+                        ui.start(a);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
-                stage.close();
             }
         });
         grid.add(addCourseButton, 2, i+4);
@@ -293,8 +291,15 @@ public class Dashboard extends Application {
 
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()){
-                    Home h = new Home();
-                    h.changeLogin(newPassword.getText());
+                    String passwordText = newPassword.getText();
+                    if (passwordText.contains(" ")){
+                        action.triggerAlert("Error Message",
+                                "Authentication Error",
+                                "Password cannot have spaces");
+                    } else {
+                        Home h = new Home();
+                        h.changeLogin(newPassword.getText());
+                    }
                 }
 
             }
