@@ -116,6 +116,16 @@ public class Course {
 
     }
 
+    public boolean assignmentPresent(String assignmentName){
+        for (Gradable gradable : gradableList) {
+            if (gradable.getAssignmentName().equals(assignmentName)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
 
 
     // Add student to class from on click event in the UI
@@ -163,6 +173,7 @@ public class Course {
         if (assignmentPresent(assignmentName, gradableCategory)){
             return -1;
         }
+        System.out.println("Adding new gradable to db");
 //        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
         Gradable newGradable = new Gradable();
         newGradable.setCourseID(courseID);
@@ -196,10 +207,20 @@ public class Course {
     }
 
     public void editGrade(String studentID, String assignmentName, BigDecimal newScore, List<Tag> tags){
+//        if (!assignmentPresent(assignmentName)){
+//            addGradable(assignmentName, newScore, )
+//        }
+        System.out.println("Editing grade for student: "+studentID);
+        System.out.println("Assignment: "+assignmentName+" and score: "+newScore);
         int studentIndex = findStudentIndex(studentID);
         int assignmentIndex = findAssignmentIndex(assignmentName);
         studentList.get(studentIndex).editGrade(assignmentIndex,newScore, tags);
     }
+
+    public void createCategory(){
+
+    }
+
 
     public HashMap<String, String> calculateFinalGrades(){
         GradeDAO gdb = new GradeDB();
