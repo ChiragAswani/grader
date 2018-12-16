@@ -95,12 +95,16 @@ public class Student {
         this.type = type;
     }
 
-    public void editGrade(int index, BigDecimal newScore, List<Tag> tags){
+    public void editGrade(int gradableid,int index, BigDecimal newScore, List<Tag> tags){
         gradeList.get(index).settList(tags);
         gradeList.get(index).setScore(newScore);
         GradeDAO gdb = new GradeDB();
         try{
-            gdb.updateGrade(gradeList.get(index));
+            if (gdb.findOneGrade(studentID,gradableid)!=null){
+                gdb.updateGrade(gradeList.get(index));
+            }else {
+                gdb.insertGrade(gradeList.get(index));
+            }
         }
         catch (Exception e){
 

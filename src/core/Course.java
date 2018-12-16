@@ -214,7 +214,7 @@ public class Course {
         System.out.println("Assignment: "+assignmentName+" and score: "+newScore);
         int studentIndex = findStudentIndex(studentID);
         int assignmentIndex = findAssignmentIndex(assignmentName);
-        studentList.get(studentIndex).editGrade(assignmentIndex,newScore, tags);
+        studentList.get(studentIndex).editGrade(gradableList.get(assignmentIndex).getgID(),assignmentIndex,newScore, tags);
     }
 
     public void createCategory(){
