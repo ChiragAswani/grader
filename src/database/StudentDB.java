@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import DAO.GradeDAO;
 import DAO.StudentDAO;
 import Student.Student;
 import grades.Grade;
@@ -118,6 +119,13 @@ public class StudentDB extends DBconn implements StudentDAO {
         stmt.setInt(2,s.getCourseID());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
+        GradeDB gradedb=new GradeDB();
+        List<Grade> gradeList= gradedb.findOneStudentAllGradeInOneCourse(s.getStudentID(),s.getCourseID());
+        if (gradeList!=null && gradeList.size()>0){
+            for (Grade g:gradeList){
+                gradedb.deleteGrade(g);
+            }
+        }
     }
 
     @Override
