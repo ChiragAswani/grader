@@ -139,8 +139,16 @@ public class Course {
         Student newStudent = new Student(courseID, studentID, firstName, lastName, customWeights, type);
         studentList.add(newStudent);
         StudentDAO sdb=new StudentDB();
+        GradeDAO gdb=new GradeDB();
         try{
             sdb.addStudentToCourse(newStudent);
+            for (Gradable g:gradableList){
+                if (newStudent.getType()=="grad"){
+                    newStudent.addGrade(g.getgID(),g.getWeight_grad());
+                }else {
+                    newStudent.addGrade(g.getgID(),g.getWeight_ungrad());
+                }
+            }
         }catch (Exception e){
             Actions action = new Actions();
             action.triggerAlert("Error Message",

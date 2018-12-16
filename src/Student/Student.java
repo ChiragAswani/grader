@@ -99,7 +99,7 @@ public class Student {
         Grade grade=new Grade();
         grade.setsID(studentID);
         grade.setgID(gradableid);
-        grade.setScore(new BigDecimal(0));
+        grade.setScore(new BigDecimal(-1));
         grade.setWeighting(weight);
         GradeDAO gdb=new GradeDB();
         try{
