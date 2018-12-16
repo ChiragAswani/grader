@@ -83,7 +83,11 @@ public class MainUI extends Application {
                         grid.setPadding(new Insets(20, 150, 10, 10));
 
                         final Text totalPoints = new Text();
-                        String tP = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore().toString();
+
+//                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
+//                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
+                        BigDecimal totalScore = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore();
+                        String tP = totalScore.setScale(2).toString();
                         totalPoints.setText(tP);
 
                         final TextField pointsMissed = new TextField();
@@ -109,6 +113,7 @@ public class MainUI extends Application {
                             Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
                             cb1.setText(tagList.get(i).getTname());
+
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
@@ -127,22 +132,20 @@ public class MainUI extends Application {
 
                         Optional<String> result = dialog.showAndWait();
                         if (result.isPresent()){
-                            int computedValue = (int) Double.parseDouble(tP) - (int) Double.parseDouble(pointsMissed.getText());
+
+                            if(pointsMissed.getText().equals("")){
+                                return;
+                            }
+
+                            double computedValue =  Double.parseDouble(tP) - Double.parseDouble(pointsMissed.getText());
+
                             int row = cell.getIndex();
                             data2.get(row);
                             course.editGrade(String.valueOf(data2.get(row).get(2)),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
                             System.out.println("Editing row: "+data2.get(row));
-
-                            cell.startEdit();
-                            cell.setText(String.valueOf(computedValue) + "/" + tP);
-                            cell.commitEdit(String.valueOf(computedValue) + "/" + tP);
-
-                            data2.get(row);
-                            System.out.println("Finished editing row: "+data2.get(row));
-
+                            e.consume();
                             renderTable(currentStage);
 
-                            e.consume();
                         }
 
                     });
@@ -328,13 +331,16 @@ public class MainUI extends Application {
                     List<Grade> gradeList = student.getGradeList();
                     System.out.println(gradeList);
                     for (int i=0; i<gradeList.size(); i++){
-                        System.out.println(gradeList.get(i).getScore());
-                        int intScore = gradeList.get(i).getScore().intValue();
+                        Grade grade = gradeList.get(i);
+                        System.out.println(grade.getScore());
+                        int intScore = grade.getScore().intValue();
+                        BigDecimal score = grade.getScore().setScale(2);
+                        BigDecimal total = grade.getTotalScore(course.getCourseID());
                         if (intScore == -1){
                             row.add("");
                         }
                         else{
-                            row.add(String.valueOf(intScore));
+                            row.add(score.stripTrailingZeros().toPlainString() +"/"+total.stripTrailingZeros().toPlainString());
                         }
                     }
                     for (int i=0; i<gradableList.size()-gradeList.size(); i++){

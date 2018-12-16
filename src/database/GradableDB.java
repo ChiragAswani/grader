@@ -58,7 +58,7 @@ public class GradableDB extends DBconn implements GradableDAO {
             gradable.setMaxScore(rs.getBigDecimal("maxscore"));
             gradable.setWeight_grad(rs.getBigDecimal("weighting_graduate"));
             gradable.setWeight_ungrad(rs.getBigDecimal("weighting_undergraduate"));
-            gradable.setgID(rs.getInt("courseid"));
+            gradable.setCourseID(rs.getInt("courseid"));
             gradable.setType(rs.getString("type"));
             gradableOut=gradable;
         }
@@ -85,7 +85,7 @@ public class GradableDB extends DBconn implements GradableDAO {
             gradable.setMaxScore(rs.getBigDecimal("maxscore"));
             gradable.setWeight_grad(rs.getBigDecimal("weighting_graduate"));
             gradable.setWeight_ungrad(rs.getBigDecimal("weighting_undergraduate"));
-            gradable.setgID(rs.getInt("courseid"));
+            gradable.setCourseID(rs.getInt("courseid"));
             gradable.setType(rs.getString("type"));
             gradableOut=gradable;
         }
@@ -178,7 +178,7 @@ public class GradableDB extends DBconn implements GradableDAO {
     public void updateGradable(Gradable g)throws Exception {
         Connection conn= DBconn.getConnection();
         String sql="update gradable \n"+
-                    "set gname=?, maxscore=?, type=?,  \n"+
+                    "set gname=?, maxscore=?, type=?  \n"+
                     "where gradableid=?";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setString(1,g.getAssignmentName());
