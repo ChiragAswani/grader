@@ -4,6 +4,7 @@ import Student.Student;
 import com.sun.tools.javac.Main;
 import core.Course;
 import core.Home;
+import grades.Category;
 import grades.Gradable;
 import grades.Grade;
 import grades.Tag;
@@ -83,6 +84,7 @@ public class MainUI extends Application {
                         grid.setPadding(new Insets(20, 150, 10, 10));
 
                         final Text totalPoints = new Text();
+
 //                        String tP = "40"; //backend-getTotalPointsByAssignmentName(assignmentName)
 //                        course.findAssignmentByName(n.getText(), p.getParentColumn().getText());
                         BigDecimal totalScore = course.findAssignmentByName(n.getText(), p.getParentColumn().getText()).getMaxScore();
@@ -112,6 +114,7 @@ public class MainUI extends Application {
                             Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
                             cb1.setText(tagList.get(i).getTname());
+
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
@@ -137,7 +140,6 @@ public class MainUI extends Application {
 
                             double computedValue =  Double.parseDouble(tP) - Double.parseDouble(pointsMissed.getText());
 
-
                             int row = cell.getIndex();
                             data2.get(row);
                             course.editGrade(String.valueOf(data2.get(row).get(2)),n.getText(), BigDecimal.valueOf(computedValue), selectedTags);
@@ -147,6 +149,26 @@ public class MainUI extends Application {
 
                         }
 
+                    });
+                    return cell ;
+                }
+            };
+
+    Callback<TableColumn, TableCell> finalGradeCellFactory =
+            new Callback<TableColumn, TableCell>() {
+                public TableCell call(TableColumn p) {
+                    TableCell<Assignment, String> cell = new TableCell<Assignment, String>() {
+                        @Override
+                        protected void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty) ;
+                            setText(empty ? null : item);
+                        }
+                    };
+                    cell.setOnMouseClicked(e -> {
+                        int row = cell.getIndex();
+                        data2.get(row);
+                        String studentID = data2.get(row).get(2).toString();
+                        displayFinalGradeInfo(studentID);
                     });
                     return cell ;
                 }
@@ -247,6 +269,7 @@ public class MainUI extends Application {
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
 
+
                 TableColumn column2 = buildNewColumn(columnCounter, "Last Name");
                 table2.getColumns().addAll(column2);
                 System.out.println("Column [" + columnCounter + "] ");
@@ -335,6 +358,7 @@ public class MainUI extends Application {
                  *******************************
                  */
                 TableColumn finalScoreColumn = buildNewColumn(columnCounter, "Final Grade");
+                finalScoreColumn.setCellFactory(finalGradeCellFactory);
                 table2.getColumns().addAll(finalScoreColumn);
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
@@ -342,8 +366,6 @@ public class MainUI extends Application {
                 for (int i=0;i<studentList.size(); i++){
                     data2.get(i).add(finalScores.get(i));
                 }
-
-
 
                 //FINALLY ADDED TO TableView
                 table2.setItems(data2);
@@ -713,8 +735,66 @@ public class MainUI extends Application {
 
     }
 
-    public String prettyString(BigDecimal value){
+    public String prettyString(BigDecimal value) {
         return value.setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
+    }
+
+
+    public void displayFinalGradeInfo(String studentID){
+        Dialog dialog = new Dialog();
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+        dialog.setHeaderText("Additional Information");
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        Student currentStudent = course.getStudentList().get(course.findStudentIndex(studentID));
+
+        Text firstName = new Text();
+        firstName.setText(currentStudent.getFirstName());
+        Text lastName = new Text();
+        lastName.setText(currentStudent.getLastName());
+        Text BUID = new Text();
+        BUID.setText(currentStudent.getStudentID());
+
+        int rowIndex = 0;
+        grid.add(new Label("First Name:"), 0, rowIndex);
+        grid.add(firstName, 1, rowIndex);
+        rowIndex++;
+
+        grid.add(new Label("Last Name:"), 0, rowIndex);
+        grid.add(lastName, 1, rowIndex);
+        rowIndex++;
+
+        grid.add(new Label("BUID:"), 0, rowIndex);
+        grid.add(BUID, 1, rowIndex);
+        rowIndex++;
+
+        for (int courseCounter = 0; courseCounter < course.getCategoryList().size(); courseCounter++){
+            Category category = course.getCategoryList().get(courseCounter);
+            Text categoryName = new Text(category.getCategoryName());
+            categoryName.setFont(new Font(20));
+            categoryName.setUnderline(true);
+            grid.add(categoryName, 0, rowIndex);
+            rowIndex++;
+
+            List<Gradable> assignmentsInCategory = course.getAssignmentsForCategory(category.getCategoryName());
+            List<Grade> gradeInAssignment = currentStudent.getGradeList();
+            for (int assignmentCounter = 0; assignmentCounter < assignmentsInCategory.size(); assignmentCounter++){
+                String assignmentName = assignmentsInCategory.get(assignmentCounter).getAssignmentName();
+
+                BigDecimal assignmentGrade = gradeInAssignment.get(assignmentCounter).getScore();
+
+
+                grid.add(new Label(assignmentName + ":"), 0, rowIndex);
+                grid.add(new Text(prettyString(assignmentGrade)), 1, rowIndex);
+                rowIndex++;
+            }
+        }
+
+        dialog.getDialogPane().setContent(grid);
+        Optional<String> result = dialog.showAndWait();
     }
 
 }
