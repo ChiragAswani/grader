@@ -95,6 +95,7 @@ public class HomeDB extends DBconn implements HomeDAO {
                     "  `categoryName` varchar(255) NOT NULL,\n" +
                     "  `weight_undergraduate` decimal(10,2) DEFAULT NULL,\n" +
                     "  `weight_graduate` decimal(10,2) DEFAULT NULL,\n" +
+                    "  `displayOrder` bigint(11) DEFAULT NULL, \n" +
                     "  PRIMARY KEY (`courseid`,`categoryName`),\n" +
                     "  KEY `categoryName` (`categoryName`),\n" +
                     "  CONSTRAINT `foreignkey10` FOREIGN KEY (`courseid`) REFERENCES `course` (`courseid`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
