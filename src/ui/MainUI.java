@@ -1,8 +1,11 @@
 package ui;
 
+import DAO.GradableDAO;
+import DAO.GradeDAO;
 import Student.Student;
 import core.Course;
 import core.Home;
+import database.GradeDB;
 import grades.Category;
 import grades.Gradable;
 import grades.Grade;
@@ -46,6 +49,7 @@ import java.util.List;
 public class MainUI extends Application {
 
     private TableView<Person> table = new TableView<Person>();
+
     private ObservableList<Person> data =
             FXCollections.observableArrayList();
 
@@ -86,7 +90,28 @@ public class MainUI extends Application {
                         String tP = Utils.prettyString(totalScore);
                         totalPoints.setText(tP);
 
+
+                        int row = cell.getIndex();
+                        data2.get(row);
+                        String studentId = data2.get(row).get(2).toString();
+                        int gradableId = assignment.getgID();
+                        GradeDAO gdb=new GradeDB();
+                        Grade grade=null;
+                        try{
+                            grade=gdb.findOneGrade(studentId,gradableId);
+                        }catch (Exception err){
+                            err.printStackTrace();
+                        }
+
+
+
+
                         final TextField pointsMissed = new TextField();
+                        if (grade!=null && grade.getScore().intValue()>-1){
+                            BigDecimal showScore=grade.getTotalScore(course.getCourseID());
+                            showScore=showScore.subtract(grade.getScore());
+                            pointsMissed.setText(showScore.toString());
+                        }
                         pointsMissed.setPromptText("i.e 7");
 
 
@@ -100,10 +125,7 @@ public class MainUI extends Application {
                         grid.add(new Label("Points Missed"), 0, 3);
                         grid.add(pointsMissed, 1, 3);
 
-                        int row = cell.getIndex();
-                        data2.get(row);
-                        String studentId = data2.get(row).get(2).toString();
-                        int gradableId = assignment.getgID();
+
 
                         Home h = new Home();
                         List<Tag> selectedTags = new ArrayList<Tag>();
@@ -114,7 +136,18 @@ public class MainUI extends Application {
                             Tag tagObj = tagList.get(i);
                             CheckBox cb1 = new CheckBox();
                             cb1.setText(tagList.get(i).getTname());
-
+                            boolean hasTag=false;
+                            for (Tag t: grade.gettList()){
+                                if (tagObj.gettID()==t.gettID()){
+                                    hasTag=true;
+                                }
+                            }
+                            if (hasTag){
+                                cb1.setSelected(true);
+                                selectedTags.add(tagObj);
+                            }else{
+                                cb1.setSelected(false);
+                            }
                             cb1.selectedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> ov,
                                                     Boolean old_val, Boolean new_val) {
@@ -180,32 +213,23 @@ public class MainUI extends Application {
         launch(args);
     }
 
-    public void deletePerson()
-    {
-        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
+    public void deleteStudent() {
+        TableViewSelectionModel<Person> tsm = table2.getSelectionModel();
 
-        // Check, if any rows are selected
-        if (tsm.isEmpty())
-        {
+        if (tsm.isEmpty()) {
             System.out.println("Please select a row to delete.");
             return;
         }
-
-        // Get all selected row indices in an array
         ObservableList<Integer> list = tsm.getSelectedIndices();
-
         Integer[] selectedIndices = new Integer[list.size()];
         selectedIndices = list.toArray(selectedIndices);
-
-        // Sort the array
         Arrays.sort(selectedIndices);
 
-        // Delete rows (last to first)
-        for(int i = selectedIndices.length - 1; i >= 0; i--)
-        {
-            tsm.clearSelection(selectedIndices[i].intValue());
-            table.getItems().remove(selectedIndices[i].intValue());
-//            course.de
+        for(int i = selectedIndices.length - 1; i >= 0; i--) {
+            List<String> item = (ObservableList) table2.getItems().get(selectedIndices[i]);
+            String BUID = item.get(2);
+            course.deleteStudent(BUID);
+            renderTable(currentStage);
         }
     }
 
@@ -378,6 +402,10 @@ public class MainUI extends Application {
     public void start(Stage stage) {
         //TableView
         table2 = new TableView();
+        TableViewSelectionModel<Person> tsm = table2.getSelectionModel();
+        tsm.setSelectionMode(SelectionMode.SINGLE);
+
+
         buildData();
 
         Button newStudentButton = buildNewStudentButton();
@@ -391,8 +419,12 @@ public class MainUI extends Application {
         currentStage.setHeight(1000);
 
 
+        Button deleteStudentButton = new Button("Delete Selected Rows");
+        deleteStudentButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) { deleteStudent(); }
+        });
 
-        hb.getChildren().addAll(newStudentButton);
+        hb.getChildren().addAll(newStudentButton, deleteStudentButton);
         hb.setSpacing(3);
 
 
@@ -424,6 +456,8 @@ public class MainUI extends Application {
             }
         });
         currentStage.show();
+
+
     }
 
 
