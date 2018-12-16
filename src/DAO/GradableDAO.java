@@ -22,4 +22,5 @@ public interface GradableDAO {
     // update gradable.
     public List<Gradable> getAllGradableInOneCategory(Category c) throws Exception;
     // get
+    public Gradable findOneGradableByCategoryNameAndGradableName(int courseid,String gname,String cname) throws Exception;
 }

@@ -13,12 +13,13 @@ public class CategoryDB extends DBconn implements CategoryDAO {
     @Override
     public void insertCategory(Category gc) throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="INSERT INTO category(courseid,categoryName,weight_undergraduate,weight_graduate) VALUES(?,?,?,?)";
+        String sql="INSERT INTO category(courseid,categoryName,weight_undergraduate,weight_graduate,displayOrder) VALUES(?,?,?,?,?)";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setInt(1,gc.getCourseid());
         stmt.setString(2,gc.getCategoryName());
         stmt.setBigDecimal(3,gc.getWeight_ungrad());
         stmt.setBigDecimal(4,gc.getWeight_grad());
+        stmt.setLong(5,System.currentTimeMillis());
         stmt.executeUpdate();
         DBconn.closeAll(conn,stmt);
     }
@@ -50,7 +51,8 @@ public class CategoryDB extends DBconn implements CategoryDAO {
     @Override
     public List<Category> findAllCategoryInOneCourse(int courseid) throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="select * from category where courseid=?";
+        String sql="select * from category where courseid=? \n"+
+                "ORDER BY displayOrder ASC";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setInt(1,courseid);
         ResultSet rs= stmt.executeQuery();
@@ -70,7 +72,8 @@ public class CategoryDB extends DBconn implements CategoryDAO {
     @Override
     public Category findOneCategoryInOneCourse(int courseid, String categoryName) throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="select * from category where courseid=? and categoryName=?";
+        String sql="select * from category where courseid=? and categoryName=?\n"+
+                "ORDER BY displayOrder ASC";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setInt(1,courseid);
         stmt.setString(2,categoryName);
