@@ -44,7 +44,7 @@ public class GradeDB extends DBconn implements GradeDAO {
     public Grade findOneGrade(String studentid, int gradableid) throws Exception {
         Connection conn=DBconn.getConnection();
         String sql="select * from grade \n" +
-                "where  g.gradableid=? and g.studentid=? ";
+                "where  gradableid=? and studentid=? ";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setInt(1,gradableid);
         stmt.setString(2,studentid);

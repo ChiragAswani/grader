@@ -72,7 +72,7 @@ public class CategoryDB extends DBconn implements CategoryDAO {
     @Override
     public Category findOneCategoryInOneCourse(int courseid, String categoryName) throws Exception {
         Connection conn=DBconn.getConnection();
-        String sql="select * from category where courseid=? and categoryName=?\n"+
+        String sql="select * from category where courseid=? and categoryName=? \n"+
                 "ORDER BY displayOrder ASC";
         PreparedStatement stmt= conn.prepareStatement(sql);
         stmt.setInt(1,courseid);
