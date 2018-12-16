@@ -1,9 +1,11 @@
 package core;
 
+import DAO.CategoryDAO;
 import DAO.GradableDAO;
 import DAO.GradeDAO;
 import DAO.StudentDAO;
 import Student.Student;
+import database.CategoryDB;
 import database.GradableDB;
 import database.GradeDB;
 import database.StudentDB;
@@ -11,6 +13,7 @@ import grades.Gradable;
 import grades.Category;
 import grades.Grade;
 import grades.Tag;
+import ui.Actions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -139,6 +142,10 @@ public class Course {
         try{
             sdb.addStudentToCourse(newStudent);
         }catch (Exception e){
+            Actions action = new Actions();
+            action.triggerAlert("Error Message",
+                    "Database Error",
+                    "Tag name already exists in the database! Please create a new name for your tag");
             e.printStackTrace();
         }
         System.out.println(Arrays.toString(studentList.toArray()));
@@ -174,6 +181,7 @@ public class Course {
             return -1;
         }
         System.out.println("Adding new gradable to db");
+        System.out.println(assignmentName + " in "+ gradableCategory);
 //        Gradable gradable = new Gradable(courseID, gradableId, assignmentName, maxScore, weightU, weightG, c, t);
         Gradable newGradable = new Gradable();
         newGradable.setCourseID(courseID);
@@ -193,6 +201,21 @@ public class Course {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public void addCategory(String categoryName, BigDecimal weightU, BigDecimal weightG){
+        System.out.println("Adding new category to db: "+categoryName);
+        Category newCategory = new Category();
+        newCategory.setCourseid(courseID);
+        newCategory.setCategoryName(categoryName);
+        newCategory.setWeight_grad(weightG);
+        newCategory.setWeight_ungrad(weightU);
+        CategoryDAO cdb = new CategoryDB();
+        try{
+            cdb.insertCategory(newCategory);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void removeGradable(int gradableID){
