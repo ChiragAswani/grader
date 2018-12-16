@@ -95,20 +95,30 @@ public class Student {
         this.type = type;
     }
 
-    public void editGrade(int gradableid,int index, BigDecimal newScore, List<Tag> tags){
-        System.out.println("Editing grade for student");
+    public void addGrade(int gradableid, BigDecimal weight){
+        Grade grade=new Grade();
+        grade.setsID(studentID);
+        grade.setgID(gradableid);
+        grade.setScore(new BigDecimal(0));
+        grade.setWeighting(weight);
+        GradeDAO gdb=new GradeDB();
+        try{
+            gdb.insertGrade(grade);
+            gradeList.add(grade);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void editGrade(int index, BigDecimal newScore, List<Tag> tags){
         gradeList.get(index).settList(tags);
         gradeList.get(index).setScore(newScore);
         GradeDAO gdb = new GradeDB();
         try{
-            if (gdb.findOneGrade(studentID,gradableid)!=null){
-                gdb.updateGrade(gradeList.get(index));
-            }else {
-                gdb.insertGrade(gradeList.get(index));
-            }
+            gdb.updateGrade(gradeList.get(index));
         }
         catch (Exception e){
-
+            e.printStackTrace();
         }
     }
 }

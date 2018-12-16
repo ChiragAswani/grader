@@ -195,6 +195,13 @@ public class Course {
         try{
             Gradable builtGradable = gdb.addGradableToOneCourse(newGradable);
             gradableList.add(builtGradable);
+            for (Student s: studentList){
+                if (s.getType()=="grad"){
+                    s.addGrade(builtGradable.getgID(),builtGradable.getWeight_grad());
+                }else{
+                    s.addGrade(builtGradable.getgID(),builtGradable.getWeight_ungrad());
+                }
+            }
             return  builtGradable.getgID();
         }
         catch (Exception e){
@@ -250,7 +257,7 @@ public class Course {
         System.out.println("Assignment: "+assignmentName+" and score: "+newScore);
         int studentIndex = findStudentIndex(studentID);
         int assignmentIndex = findAssignmentIndex(assignmentName);
-        studentList.get(studentIndex).editGrade(gradableList.get(assignmentIndex).getgID(),assignmentIndex,newScore, tags);
+        studentList.get(studentIndex).editGrade(assignmentIndex,newScore, tags);
     }
 
     public void createCategory(){
