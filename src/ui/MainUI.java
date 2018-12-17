@@ -42,6 +42,7 @@ import utils.SessionManagementUtils;
 import utils.Utils;
 
 import java.math.BigDecimal;
+import java.security.PublicKey;
 import java.util.*;
 import java.util.List;
 
@@ -72,14 +73,17 @@ public class MainUI extends Application {
                         }
                     };
                     cell.setOnMouseClicked(e -> {
-                        Dialog<String> dialog = new Dialog<String>();
+                        Dialog<ButtonType> dialog = new Dialog<>();
                         dialog.setTitle("Add Grading Details");
                         Button n = (Button) p.getGraphic();
 
                         dialog.setHeaderText("Add Grading Details to Assignment: " + n.getText());
 
                         ButtonType addScore = new ButtonType("Add Score", ButtonBar.ButtonData.APPLY.OK_DONE);
-                        dialog.getDialogPane().getButtonTypes().addAll(addScore, ButtonType.CANCEL);
+
+                        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        dialog.getDialogPane().getButtonTypes().setAll(addScore, cancelButton);
+
 
                         GridPane grid = Utils.buildGridPane();
 
@@ -110,7 +114,7 @@ public class MainUI extends Application {
                         if (grade!=null && grade.getScore().intValue()>-1){
                             BigDecimal showScore=grade.getTotalScore(course.getCourseID());
                             showScore=showScore.subtract(grade.getScore());
-                            pointsMissed.setText(showScore.toString());
+                            pointsMissed.setText(Utils.prettyString(showScore));
                         }
                         pointsMissed.setPromptText("i.e 7");
 
@@ -164,9 +168,11 @@ public class MainUI extends Application {
 
                         dialog.getDialogPane().setContent(grid);
 
-                        Optional<String> result = dialog.showAndWait();
+                        Optional<ButtonType> result = dialog.showAndWait();
                         if (result.isPresent()){
-
+                            if( result.get()==cancelButton){
+                                return;
+                            }
                             if(pointsMissed.getText().equals("")){
                                 return;
                             }
@@ -178,6 +184,9 @@ public class MainUI extends Application {
                             e.consume();
                             SessionManagementUtils.renderTable(currentStage, course);
 
+                        }
+                        else{
+                            System.out.println("Canceled");
                         }
 
                     });
@@ -229,7 +238,7 @@ public class MainUI extends Application {
             List<String> item = (ObservableList) table2.getItems().get(selectedIndices[i]);
             String BUID = item.get(2);
             course.deleteStudent(BUID);
-            renderTable(currentStage);
+            SessionManagementUtils.renderTable(currentStage, course);
         }
     }
 
@@ -468,12 +477,14 @@ public class MainUI extends Application {
             @Override
             public void handle(ActionEvent e) {
 
-                Dialog<String> dialog = new Dialog<>();
+                Dialog<ButtonType> dialog = new Dialog<>();
                 dialog.setTitle("Add A New Grading Category");
                 dialog.setHeaderText("Add a New Grading Category (i.e. Homeworks)");
 
                 ButtonType addGradingCategory = new ButtonType("Add Grading Category", ButtonBar.ButtonData.APPLY.OK_DONE);
-                dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, ButtonType.CANCEL);
+
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getDialogPane().getButtonTypes().addAll(addGradingCategory, cancelButton);
 
                 GridPane grid = Utils.buildGridPane();
 
@@ -505,9 +516,12 @@ public class MainUI extends Application {
 
                 dialog.getDialogPane().setContent(grid);
 
-                Optional<String> result = dialog.showAndWait();
+                Optional<ButtonType> result = dialog.showAndWait();
 
                 if (result.isPresent()){
+                    if( result.get()==cancelButton){
+                        return;
+                    }
                     String gradingCategory = addGradingCategoryInput.getText();
                     String uWeight = underGraduateWeight.getText();
                     String gWeight = graduateWeight.getText();
@@ -531,7 +545,9 @@ public class MainUI extends Application {
                 dialog.setHeaderText("Add a student to " + course.getCourseName());
 
                 ButtonType addStudentButton = new ButtonType("Add Student", ButtonBar.ButtonData.APPLY.OK_DONE);
-                dialog.getDialogPane().getButtonTypes().addAll(addStudentButton, ButtonType.CANCEL);
+
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getDialogPane().getButtonTypes().addAll(addStudentButton, cancelButton);
 
                 GridPane grid = Utils.buildGridPane();
 
@@ -564,6 +580,9 @@ public class MainUI extends Application {
                 Optional result = dialog.showAndWait();
 
                 if (result.isPresent()){
+                    if( result.get()==cancelButton){
+                        return;
+                    }
                     if (addFirstName.getText().length() == 0){
                         System.out.println("First Name cannot be empty");
                     }
@@ -615,12 +634,14 @@ public class MainUI extends Application {
         addAssignment.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
 
-                Dialog<String> dialog = new Dialog<>();
+                Dialog dialog = new Dialog<>();
                 dialog.setTitle("Add a Gradeable");
                 dialog.setHeaderText("Add a new assignment to: " + gC.getText());
 
                 ButtonType addAssignmentButton = new ButtonType("Add Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
-                dialog.getDialogPane().getButtonTypes().addAll(addAssignmentButton, ButtonType.CANCEL);
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                dialog.getDialogPane().getButtonTypes().addAll(addAssignmentButton, cancelButton);
 
                 GridPane grid = Utils.buildGridPane();
 
@@ -640,9 +661,12 @@ public class MainUI extends Application {
 
                 dialog.getDialogPane().setContent(grid);
 
-                Optional<String> result = dialog.showAndWait();
+                Optional result = dialog.showAndWait();
 
                 if (result.isPresent()){
+                    if( result.get()==cancelButton){
+                        return;
+                    }
                     if (addAssignmentName.getText().length() == 0){
                         System.out.println("Assignment Name cannot be empty");
                     }
@@ -672,8 +696,11 @@ public class MainUI extends Application {
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Edit a Assignment");
                 dialog.setHeaderText("Editing Assignment: " + assignmentName);
+
                 ButtonType addAssignmentButton = new ButtonType("Edit Assignment", ButtonBar.ButtonData.APPLY.OK_DONE);
-                dialog.getDialogPane().getButtonTypes().addAll(addAssignmentButton, ButtonType.CANCEL);
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                dialog.getDialogPane().getButtonTypes().addAll(addAssignmentButton, cancelButton);
 
                 GridPane grid = Utils.buildGridPane();
 
@@ -696,9 +723,12 @@ public class MainUI extends Application {
 
                 dialog.getDialogPane().setContent(grid);
 
-                Optional<String> result = dialog.showAndWait();
+                Optional result = dialog.showAndWait();
 
                 if (result.isPresent()){
+                    if( result.get()==cancelButton){
+                        return;
+                    }
                     if (addAssignmentName.getText().length() == 0){
                         System.out.println("Assignment Name cannot be empty");
                     }
@@ -736,8 +766,11 @@ public class MainUI extends Application {
 
 
     public void displayFinalGradeInfo(String studentID){
-        Dialog<String> dialog = new Dialog<String>();
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+        Dialog dialog = new Dialog<String>();
+
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(cancelButton);
+
         dialog.setHeaderText("Additional Information");
         GridPane grid = Utils.buildGridPane();
 
@@ -786,7 +819,8 @@ public class MainUI extends Application {
         }
 
         dialog.getDialogPane().setContent(grid);
-        Optional<String> result = dialog.showAndWait();
+        Optional result = dialog.showAndWait();
     }
+
 
 }

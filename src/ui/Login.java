@@ -31,7 +31,15 @@ public class Login extends Application {
         dialog.setHeaderText("Welcome to GradeSafe");
 
         ButtonType enterGradingPortal = new ButtonType("Enter Grading Portal", ButtonBar.ButtonData.APPLY.OK_DONE);
+
         dialog.getDialogPane().getButtonTypes().addAll(enterGradingPortal, ButtonType.CANCEL);
+
+        final Button cancel = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        cancel.addEventFilter(ActionEvent.ACTION, event ->
+                System.exit(0)
+        );
+
+
 
         GridPane grid = Utils.buildGridPane();
 
@@ -56,6 +64,7 @@ public class Login extends Application {
         dialog.getDialogPane().setContent(grid);
 
         Optional<String> result = dialog.showAndWait();
+
 
         if (result.isPresent()){
             Actions action = new Actions();
