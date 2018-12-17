@@ -411,6 +411,7 @@ public class MainUI extends Application {
     public void start(Stage stage) {
         //TableView
         table2 = new TableView();
+        table2.setMinWidth(1400);
         TableViewSelectionModel<Person> tsm = table2.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.SINGLE);
 
@@ -424,8 +425,8 @@ public class MainUI extends Application {
         Scene scene = new Scene(new Group());
         currentStage = stage;
         currentStage.setTitle(course.getCourseName());
-        currentStage.setWidth(1000);
-        currentStage.setHeight(1000);
+        currentStage.setWidth(1500);
+        currentStage.setHeight(900);
 
 
         Button deleteStudentButton = new Button("Delete Selected Rows");
@@ -796,6 +797,12 @@ public class MainUI extends Application {
         grid.add(BUID, 1, rowIndex);
         rowIndex++;
 
+        Home h = new Home();
+        List<Tag> allTagList=h.getAllTag();
+        Map<String,Object> tagMap=new HashMap<>();
+        for (Tag t:allTagList){
+            tagMap.put(t.getTname(),0);
+        }
         for (int courseCounter = 0; courseCounter < course.getCategoryList().size(); courseCounter++){
             Category category = course.getCategoryList().get(courseCounter);
             Text categoryName = new Text(category.getCategoryName());
@@ -806,6 +813,7 @@ public class MainUI extends Application {
 
             List<Gradable> assignmentsInCategory = course.getAssignmentsForCategory(category.getCategoryName());
             List<Grade> gradeInAssignment = currentStudent.getGradeList();
+
             for (int assignmentCounter = 0; assignmentCounter < assignmentsInCategory.size(); assignmentCounter++){
                 String assignmentName = assignmentsInCategory.get(assignmentCounter).getAssignmentName();
 
@@ -817,6 +825,38 @@ public class MainUI extends Application {
                 rowIndex++;
             }
         }
+
+        Text tagsHeader = new Text("Student Tag Results");
+        tagsHeader.setFont(new Font(20));
+        tagsHeader.setUnderline(true);
+        grid.add(tagsHeader, 0, rowIndex);
+        rowIndex++;
+
+        List<Grade> gradeInAssignment = currentStudent.getGradeList();
+
+        for (Grade g:gradeInAssignment){
+            if (g.gettList()!=null && g.gettList().size()!=0){
+                for (Tag t:g.gettList()){
+                    int newValue=(int)tagMap.get(t.getTname());
+                    newValue++;
+                    tagMap.replace(t.getTname(),newValue);
+                }
+            }
+        }
+
+        for (Tag t:allTagList){
+            if ((int)tagMap.get(t.getTname()) == 0) {
+                continue;
+            } else{
+                String tagName = t.getTname();
+                Integer tagCount = (int)tagMap.get(t.getTname());
+                grid.add(new Text(tagName), 0, rowIndex);
+                grid.add(new Text(String.valueOf(tagCount)), 1, rowIndex);
+                rowIndex++;
+            }
+        }
+
+
 
         dialog.getDialogPane().setContent(grid);
         Optional result = dialog.showAndWait();
