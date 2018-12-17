@@ -1,8 +1,8 @@
 package ui;
 
-import DAO.GradableDAO;
 import DAO.GradeDAO;
 import Student.Student;
+import com.jfoenix.controls.JFXButton;
 import core.Course;
 import core.Home;
 import database.GradeDB;
@@ -23,11 +23,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -37,24 +34,19 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import utils.SessionManagementUtils;
 import utils.Utils;
 
 import java.math.BigDecimal;
-import java.security.PublicKey;
 import java.util.*;
-import java.util.List;
 
 
 public class MainUI extends Application {
 
-    private TableView<Person> table = new TableView<Person>();
-
     private ObservableList<Person> data =
             FXCollections.observableArrayList();
 
-    private TableView table2;
+    private TableView table;
     private ObservableList<ObservableList> data2;
     private List<Person> students = new ArrayList<>();
     final HBox hb = new HBox();
@@ -107,9 +99,6 @@ public class MainUI extends Application {
                             err.printStackTrace();
                         }
 
-
-
-
                         final TextField pointsMissed = new TextField();
                         if (grade!=null && grade.getScore().intValue()>-1){
                             BigDecimal showScore=grade.getTotalScore(course.getCourseID());
@@ -128,8 +117,6 @@ public class MainUI extends Application {
                         grid.add(totalPoints, 1, 2);
                         grid.add(new Label("Points Missed"), 0, 3);
                         grid.add(pointsMissed, 1, 3);
-
-
 
                         Home h = new Home();
                         List<Tag> selectedTags = new ArrayList<Tag>();
@@ -223,7 +210,7 @@ public class MainUI extends Application {
     }
 
     public void deleteStudent() {
-        TableViewSelectionModel<Person> tsm = table2.getSelectionModel();
+        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
 
         if (tsm.isEmpty()) {
             System.out.println("Please select a row to delete.");
@@ -235,13 +222,12 @@ public class MainUI extends Application {
         Arrays.sort(selectedIndices);
 
         for(int i = selectedIndices.length - 1; i >= 0; i--) {
-            List<String> item = (ObservableList) table2.getItems().get(selectedIndices[i]);
+            List<String> item = (ObservableList) table.getItems().get(selectedIndices[i]);
             String BUID = item.get(2);
             course.deleteStudent(BUID);
             SessionManagementUtils.renderTable(currentStage, course);
         }
     }
-
 
     public TableColumn addNewGradingCategoryToTable( String gradingCategory){
 
@@ -251,7 +237,7 @@ public class MainUI extends Application {
         Button addAssignmentButton = buildAddGradableColumn(gC);
 
         gC.setGraphic(addAssignmentButton);
-        table2.getColumns().addAll(gC);
+        table.getColumns().addAll(gC);
 
         SessionManagementUtils.renderTable(currentStage, course);
 
@@ -271,14 +257,10 @@ public class MainUI extends Application {
                     }
                 }
         );
-        Button editAssignmentButton = buildEditAssignmentButton(assignmentName, maxScore, ugradWeight, gradWeight, gC, section);
 
         course.addGradable(assignmentName, maxScore, ugradWeight, gradWeight, 0, gC.getText());
-
         SessionManagementUtils.renderTable(currentStage, course);
 
-//        section.setGraphic(editAssignmentButton);
-//        gC.getColumns().addAll(section);
 
     }
         //Update Table
@@ -296,18 +278,18 @@ public class MainUI extends Application {
                  *********************************
                  */
                 TableColumn column1 = buildNewColumn(columnCounter, "First Name");
-                table2.getColumns().addAll(column1);
+                table.getColumns().addAll(column1);
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
 
 
                 TableColumn column2 = buildNewColumn(columnCounter, "Last Name");
-                table2.getColumns().addAll(column2);
+                table.getColumns().addAll(column2);
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
 
                 TableColumn column3 = buildNewColumn(columnCounter, "BUID");
-                table2.getColumns().addAll(column3);
+                table.getColumns().addAll(column3);
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
 
@@ -344,7 +326,7 @@ public class MainUI extends Application {
 
                     System.out.println("Adding Category Column: "+i);
 
-                    table2.getColumns().addAll(categoryColumn);
+                    table.getColumns().addAll(categoryColumn);
 
                 }
 
@@ -390,7 +372,7 @@ public class MainUI extends Application {
                  */
                 TableColumn finalScoreColumn = buildNewColumn(columnCounter, "Final Grade");
                 finalScoreColumn.setCellFactory(finalGradeCellFactory);
-                table2.getColumns().addAll(finalScoreColumn);
+                table.getColumns().addAll(finalScoreColumn);
                 System.out.println("Column [" + columnCounter + "] ");
                 columnCounter++;
                 List<String> finalScores = course.calculateFinalGrades();
@@ -399,7 +381,7 @@ public class MainUI extends Application {
                 }
 
                 //FINALLY ADDED TO TableView
-                table2.setItems(data2);
+                table.setItems(data2);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -410,9 +392,9 @@ public class MainUI extends Application {
     @Override
     public void start(Stage stage) {
         //TableView
-        table2 = new TableView();
-        table2.setMinWidth(1400);
-        TableViewSelectionModel<Person> tsm = table2.getSelectionModel();
+        table = new TableView();
+        table.setMinWidth(1400);
+        TableViewSelectionModel<Person> tsm = table.getSelectionModel();
         tsm.setSelectionMode(SelectionMode.SINGLE);
 
 
@@ -423,6 +405,7 @@ public class MainUI extends Application {
 
         //Main Scene
         Scene scene = new Scene(new Group());
+        scene.getStylesheets().add("ui/table-view.css");
         currentStage = stage;
         currentStage.setTitle(course.getCourseName());
         currentStage.setWidth(1500);
@@ -430,6 +413,7 @@ public class MainUI extends Application {
 
 
         Button deleteStudentButton = new Button("Delete Selected Rows");
+        deleteStudentButton.getStyleClass().add("delButton");
         deleteStudentButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) { deleteStudent(); }
         });
@@ -448,11 +432,12 @@ public class MainUI extends Application {
                 SessionManagementUtils.buildBackButton(currentStage);
             }
         });
+        goBackButton.getStyleClass().add("backButton");
 
         final Label label = new Label(this.course.getCourseName());
         label.setFont(new Font("Arial", 20));
 
-        vbox.getChildren().addAll(label,newCategoryButton, table2, hb, goBackButton);
+        vbox.getChildren().addAll(label,newCategoryButton, table, hb, goBackButton);
 
         ((Group) scene.getRoot()).getChildren().addAll(vbox);
 
@@ -538,6 +523,7 @@ public class MainUI extends Application {
 
     public Button buildNewStudentButton(){
         final Button addStudent = new Button("Add A New Student");
+        addStudent.getStyleClass().add("addButton");
         addStudent.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -691,7 +677,7 @@ public class MainUI extends Application {
     }
 
     public Button buildEditAssignmentButton(String assignmentName, BigDecimal maxScore , BigDecimal ugradWeight, BigDecimal gradWeight, TableColumn gC, TableColumn section){
-        Button editAssignment = new Button(assignmentName);
+        Button editAssignment = new JFXButton(assignmentName);
         editAssignment.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 Dialog<String> dialog = new Dialog<>();
@@ -757,6 +743,7 @@ public class MainUI extends Application {
 
     public TableColumn buildNewColumn(int columnCounter, String columnName){
         TableColumn column = new TableColumn(columnName);
+        column.setSortable(false);
         column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
             public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
                 return new SimpleStringProperty(param.getValue().get(columnCounter).toString());
@@ -855,8 +842,6 @@ public class MainUI extends Application {
                 rowIndex++;
             }
         }
-
-
 
         dialog.getDialogPane().setContent(grid);
         Optional result = dialog.showAndWait();
