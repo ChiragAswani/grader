@@ -4,7 +4,10 @@ You will need the CredentialConstatnts file to access the db
 GradeSafe
 Group one 12/17/2018
   
-Our code is built on jdk 9 and MySQL 8.0.13. Make sure you have these before you run our code.
+Our code is built on jdk 9 
+Dependencies Required:
+MySQL 8.0.13.
+jfoeniz-9.0.8.
 
 Step1:
 	Unzip the file.
