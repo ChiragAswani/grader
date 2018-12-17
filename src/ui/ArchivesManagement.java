@@ -11,6 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import utils.Utils;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,10 +30,7 @@ public class ArchivesManagement extends Application {
 
         Home h = new Home();
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        GridPane grid = Utils.buildGridPane();
 
 
         final Text archivedCoursesTitle = new Text();

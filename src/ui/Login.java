@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import utils.Utils;
 
 import java.util.Optional;
 
@@ -30,12 +31,17 @@ public class Login extends Application {
         dialog.setHeaderText("Welcome to GradeSafe");
 
         ButtonType enterGradingPortal = new ButtonType("Enter Grading Portal", ButtonBar.ButtonData.APPLY.OK_DONE);
+
         dialog.getDialogPane().getButtonTypes().addAll(enterGradingPortal, ButtonType.CANCEL);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        final Button cancel = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        cancel.addEventFilter(ActionEvent.ACTION, event ->
+                System.exit(0)
+        );
+
+
+
+        GridPane grid = Utils.buildGridPane();
 
 
         grid.add(new Label("Password: "), 0, 0);
@@ -58,6 +64,7 @@ public class Login extends Application {
         dialog.getDialogPane().setContent(grid);
 
         Optional<String> result = dialog.showAndWait();
+
 
         if (result.isPresent()){
             Actions action = new Actions();
